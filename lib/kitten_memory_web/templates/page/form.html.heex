@@ -1,0 +1,9 @@
+<section class="phx-hero">
+  <%= form_for @changeset, @path, fn f -> %>
+    <label>
+      Name: <%= text_input f, :name, required: true %>
+    </label>
+
+    <%= submit "Start" %>
+  <% end %>
+</section>

@@ -18,6 +18,12 @@ defmodule KittenMemoryWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    post "/", PageController, :start_new_game
+
+    get "/join/:id", PageController, :join
+    post "/join/:id", PageController, :join_game
+
+    live "/games/:id", GameLive
   end
 
   # Other scopes may use custom stacks.
