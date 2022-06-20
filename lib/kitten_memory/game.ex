@@ -1,6 +1,7 @@
 defmodule KittenMemory.Game do
   import Ecto.Query, warn: false
   alias KittenMemory.Repo
+  alias Phoenix.PubSub
 
   alias KittenMemory.Game.{Player, Game}
 
@@ -26,5 +27,13 @@ defmodule KittenMemory.Game do
 
   def get_game_by_id(game_id) do
     Repo.get(Game, game_id) |> Repo.preload(:players)
+  end
+
+  def subscribe(game_id) do
+    PubSub.subscribe(KittenMemory.PubSub, "games:#{game_id}")
+  end
+
+  def notify(game_id, event) do
+    PubSub.broadcast(KittenMemory.PubSub, "games:#{game_id}", {event, game_id})
   end
 end
