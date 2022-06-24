@@ -2,16 +2,6 @@ defmodule KittenMemoryWeb.GameLive do
   use KittenMemoryWeb, :live_view
   alias KittenMemory.Game
 
-  def render(assigns) do
-    ~H"""
-    <%= if length(@game.players) == 1 do %>
-      Waiting for your opponent …
-    <% else %>
-      Ready to rumble
-    <% end %>
-    """
-  end
-
   def mount(%{"id" => game_id}, _session, socket) do
     if connected?(socket), do: Game.subscribe(game_id)
     Game.notify(game_id, [:player, :joined])
