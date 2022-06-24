@@ -1,5 +1,11 @@
 <%= if length(@game.players) == 1 do %>
   Waiting for your opponent …
-<% else %>
-  Ready to rumble
+<% end %>
+
+<%= if !@current_player.is_navigator do %>
+  Waiting for the round …
+<% end %>
+
+<%= if length(@game.players) > 1 && @current_player.is_navigator do %>
+  <button>Start round</button>
 <% end %>

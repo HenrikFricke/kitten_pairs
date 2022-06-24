@@ -6,6 +6,7 @@ defmodule KittenMemory.Game.Player do
 
   schema "players" do
     field :name, :string
+    field :is_navigator, :boolean
     belongs_to :game, Game, foreign_key: :game_id, references: :id
 
     timestamps()
@@ -14,7 +15,7 @@ defmodule KittenMemory.Game.Player do
   @doc false
   def changeset(player, attrs \\ %{}) do
     player
-    |> cast(attrs, [:name, :game_id])
+    |> cast(attrs, [:name, :game_id, :is_navigator])
     |> validate_required([:name])
   end
 end

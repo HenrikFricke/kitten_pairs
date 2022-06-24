@@ -13,7 +13,7 @@ defmodule KittenMemory.Game do
 
     {:ok, player} =
       %Player{}
-      |> Player.changeset(%{game_id: game.id, name: attrs["name"]})
+      |> Player.changeset(%{game_id: game.id, name: attrs["name"], is_navigator: true})
       |> Repo.insert()
 
     %{player_id: player.id, game_id: game.id}
@@ -33,7 +33,7 @@ defmodule KittenMemory.Game do
     PubSub.subscribe(KittenMemory.PubSub, "games:#{game_id}")
   end
 
-  def notify(game_id, event) do
-    PubSub.broadcast(KittenMemory.PubSub, "games:#{game_id}", {event, game_id})
+  def notify(game_id, player_id, event, payload \\ %{}) do
+    PubSub.broadcast(KittenMemory.PubSub, "games:#{game_id}", {event, player_id, payload})
   end
 end
