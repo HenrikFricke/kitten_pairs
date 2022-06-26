@@ -1,2 +1,2 @@
 ExUnit.start()
-Ecto.Adapters.SQL.Sandbox.mode(KittenMemory.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(KittenPairs.Repo, :manual)

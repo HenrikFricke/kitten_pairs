@@ -1,4 +1,4 @@
-defmodule KittenMemory.Repo.Migrations.AddPlayerNavigatorFlag do
+defmodule KittenPairs.Repo.Migrations.AddPlayerNavigatorFlag do
   use Ecto.Migration
 
   def change do

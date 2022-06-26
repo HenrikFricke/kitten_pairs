@@ -1,4 +1,4 @@
-# KittenMemory
+# KittenPairs
 
 To start your Phoenix server:
 

@@ -1,4 +1,4 @@
-defmodule KittenMemory.Repo.Migrations.CreatePlayers do
+defmodule KittenPairs.Repo.Migrations.CreatePlayers do
   use Ecto.Migration
 
   def change do

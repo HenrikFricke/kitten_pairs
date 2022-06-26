@@ -1,9 +1,9 @@
-defmodule KittenMemory.MixProject do
+defmodule KittenPairs.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :kitten_memory,
+      app: :kitten_pairs,
       version: "0.1.0",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,7 +19,7 @@ defmodule KittenMemory.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {KittenMemory.Application, []},
+      mod: {KittenPairs.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

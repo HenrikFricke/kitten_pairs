@@ -1,4 +1,4 @@
-defmodule KittenMemoryWeb.ConnCase do
+defmodule KittenPairsWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule KittenMemoryWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use KittenMemoryWeb.ConnCase, async: true`, although
+  by setting `use KittenPairsWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -22,17 +22,17 @@ defmodule KittenMemoryWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import KittenMemoryWeb.ConnCase
+      import KittenPairsWeb.ConnCase
 
-      alias KittenMemoryWeb.Router.Helpers, as: Routes
+      alias KittenPairsWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint KittenMemoryWeb.Endpoint
+      @endpoint KittenPairsWeb.Endpoint
     end
   end
 
   setup tags do
-    KittenMemory.DataCase.setup_sandbox(tags)
+    KittenPairs.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end
