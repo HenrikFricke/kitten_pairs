@@ -5,8 +5,9 @@ defmodule KittenMemoryWeb.GameLive do
   defguard current_player?(socket, player_id)
            when socket.assigns.current_player.id === player_id
 
-  defguard not_current_player?(socket, player_id)
-           when socket.assigns.current_player.id !== player_id
+  def mount(_params, session, socket) when not is_map_key(session, "player_id") do
+    {:ok, redirect(socket, to: Routes.page_path(socket, :index))}
+  end
 
   def mount(%{"id" => game_id}, %{"player_id" => player_id}, socket) do
     if connected?(socket), do: Game.subscribe(game_id)
@@ -23,7 +24,7 @@ defmodule KittenMemoryWeb.GameLive do
   end
 
   def handle_info({[:player, :joined], player_id, _}, socket)
-      when not_current_player?(socket, player_id) do
+      when not current_player?(socket, player_id) do
     game_id = socket.assigns.game.id
     game = Game.get_game_by_id(game_id)
     {:noreply, assign(socket, :game, game)}
