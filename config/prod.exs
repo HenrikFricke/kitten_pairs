@@ -12,6 +12,9 @@ import Config
 config :kitten_pairs, KittenPairsWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
+# Configure your database
+config :kitten_pairs, KittenPairs.Repo, migration_primary_key: [name: :id, type: :binary_id]
+
 # Do not print debug messages in production
 config :logger, level: :info
 
