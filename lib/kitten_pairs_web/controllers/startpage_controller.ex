@@ -9,7 +9,8 @@ defmodule KittenPairsWeb.StartpageController do
 
     render(conn, "form.html",
       changeset: changeset,
-      path: Routes.startpage_path(conn, :start_new_game)
+      path: Routes.startpage_path(conn, :start_new_game),
+      button_label: "Start new game"
     )
   end
 
@@ -26,7 +27,8 @@ defmodule KittenPairsWeb.StartpageController do
 
     render(conn, "form.html",
       changeset: changeset,
-      path: Routes.startpage_path(conn, :join_game, game_id)
+      path: Routes.startpage_path(conn, :join_game, game_id),
+      button_label: "Join game"
     )
   end
 
