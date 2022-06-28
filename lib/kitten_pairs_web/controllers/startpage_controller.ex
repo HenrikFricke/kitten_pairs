@@ -1,4 +1,4 @@
-defmodule KittenPairsWeb.PageController do
+defmodule KittenPairsWeb.StartpageController do
   use KittenPairsWeb, :controller
 
   alias KittenPairs.Game
@@ -9,7 +9,7 @@ defmodule KittenPairsWeb.PageController do
 
     render(conn, "form.html",
       changeset: changeset,
-      path: Routes.page_path(conn, :start_new_game)
+      path: Routes.startpage_path(conn, :start_new_game)
     )
   end
 
@@ -26,7 +26,7 @@ defmodule KittenPairsWeb.PageController do
 
     render(conn, "form.html",
       changeset: changeset,
-      path: Routes.page_path(conn, :join_game, game_id)
+      path: Routes.startpage_path(conn, :join_game, game_id)
     )
   end
 

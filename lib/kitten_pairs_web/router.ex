@@ -17,11 +17,11 @@ defmodule KittenPairsWeb.Router do
   scope "/", KittenPairsWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-    post "/", PageController, :start_new_game
+    get "/", StartpageController, :index
+    post "/", StartpageController, :start_new_game
 
-    get "/join/:id", PageController, :join
-    post "/join/:id", PageController, :join_game
+    get "/join/:id", StartpageController, :join
+    post "/join/:id", StartpageController, :join_game
 
     live "/games/:id", GameLive
   end

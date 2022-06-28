@@ -6,7 +6,7 @@ defmodule KittenPairsWeb.GameLive do
            when socket.assigns.current_player.id === player_id
 
   def mount(_params, session, socket) when not is_map_key(session, "player_id") do
-    {:ok, redirect(socket, to: Routes.page_path(socket, :index))}
+    {:ok, redirect(socket, to: Routes.startpage_path(socket, :index))}
   end
 
   def mount(%{"id" => game_id}, %{"player_id" => player_id}, socket) do
