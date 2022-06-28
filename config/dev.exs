@@ -27,7 +27,8 @@ config :kitten_pairs, KittenPairsWeb.Endpoint,
   secret_key_base: "GuYbb90ITCSy/L0nahDytQTxGt3XOP4fjgC5NszgpmBwRfLQu8bkahq6ze7HTZKJ",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
 # ## SSL Support
