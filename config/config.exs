@@ -47,10 +47,6 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# Import environment specific config. This must remain at the bottom
-# of this file so it overrides the configuration defined above.
-import_config "#{config_env()}.exs"
-
 # Tailwind options
 config :tailwind,
   version: "3.1.4",
@@ -62,3 +58,7 @@ config :tailwind,
   ),
     cd: Path.expand("../assets", __DIR__)
   ]
+
+# Import environment specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
+import_config "#{config_env()}.exs"

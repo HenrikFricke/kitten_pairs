@@ -1,14 +1,16 @@
-<section class="m-4 lg:m-0 lg:w-screen lg:h-screen lg:flex lg:items-center lg:justify-center">
-  <section class="max-w-96">
-    <header>
-      <h1 class="font-black text-5xl mb-3">kitten pairs</h1>
-    </header>
+<section class="grid w-screen h-screen p-4">
+  <section class="flex justify-center items-center">
+    <section class="max-w-96">
+      <header>
+        <h1 class="font-black text-5xl mb-3">kitten pairs</h1>
+      </header>
 
-    <img src="/images/kitten.gif" alt="excited kitty" role="presentation" class="w-full rounded-3xl border-4 border-zinc-900 block mb-4" />
+      <img src="/images/kitten.gif" alt="excited kitty" role="presentation" class="w-full rounded-3xl border-4 border-zinc-900 block mb-4" />
 
-    <%= form_for @changeset, @path, fn f -> %>
-      <%= text_input f, :name, required: true, placeholder: "Your Name …", class: "w-full mb-4 box-border px-4 py-3 bg-transparent border-4 border-zinc-900 rounded-3xl text-zinc-900 block font-black text-xl" %>
-      <%= submit @button_label, class: "w-full uppercase rounded-3xl bg-pink-300 py-3 box-border font-black text-2xl" %>
-    <% end %>
+      <%= form_for @changeset, @path, fn f -> %>
+        <%= text_input f, :name, required: true, placeholder: "Your Name …", class: "w-full mb-4 box-border px-4 py-3 bg-transparent border-4 border-zinc-900 rounded-3xl text-zinc-900 block font-black text-xl" %>
+        <%= submit @button_label, class: "w-full uppercase rounded-3xl bg-pink-300 py-3 box-border font-black text-2xl" %>
+      <% end %>
+    </section>
   </section>
 </section>
