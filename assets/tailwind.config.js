@@ -1,5 +1,7 @@
 // See the Tailwind configuration guide for advanced usage
 // https://tailwindcss.com/docs/configuration
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
   content: [
     './js/**/*.js',
@@ -7,7 +9,11 @@ module.exports = {
     '../lib/*_web/**/*.*ex',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Alegreya Sans', ...defaultTheme.fontFamily.sans],
+      }
+    },
   },
   plugins: [
     require('@tailwindcss/forms')
