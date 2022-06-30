@@ -4,23 +4,13 @@ defmodule KittenPairsWeb.StartpageController do
   alias KittenPairs.Game
   alias KittenPairs.Game.{Player}
 
-  def index(conn, %{"id" => game_id}) do
+  def index(conn, params) do
     changeset = Player.changeset(%Player{})
 
     render(conn, "form.html",
       changeset: changeset,
-      path: Routes.startpage_path(conn, :join, game_id),
-      button_label: "Join game"
-    )
-  end
-
-  def index(conn, _params) do
-    changeset = Player.changeset(%Player{})
-
-    render(conn, "form.html",
-      changeset: changeset,
-      path: Routes.startpage_path(conn, :create),
-      button_label: "Start new game"
+      path: form_redirect_path(conn, params),
+      button_label: button_label(params)
     )
   end
 
@@ -67,4 +57,12 @@ defmodule KittenPairsWeb.StartpageController do
         |> redirect(to: Routes.startpage_path(conn, :index, game_id))
     end
   end
+
+  defp button_label(%{"id" => _game_id}), do: "Join game"
+  defp button_label(_params), do: "Start new game"
+
+  defp form_redirect_path(conn, %{"id" => game_id}),
+    do: Routes.startpage_path(conn, :join, game_id)
+
+  defp form_redirect_path(conn, _params), do: Routes.startpage_path(conn, :create)
 end
