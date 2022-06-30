@@ -36,5 +36,13 @@ defmodule KittenPairs.GameTest do
       assert game.id == g.id
       assert game.players == []
     end
+
+    test "returns nil for unsupported id format" do
+      assert Game.get_game_by_id("abc") == nil
+    end
+
+    test "returns nil for unknown game" do
+      assert Game.get_game_by_id("X8kY6JpsQ5Kgf9fu4uBZ4F") == nil
+    end
   end
 end

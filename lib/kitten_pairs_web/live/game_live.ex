@@ -11,12 +11,18 @@ defmodule KittenPairsWeb.GameLive do
 
   def mount(%{"id" => game_id}, %{"player_id" => player_id}, socket) do
     if connected?(socket), do: Game.subscribe(game_id)
-    game = Game.get_game_by_id(game_id)
-    current_player = Enum.find(game.players, fn p -> p.id == player_id end)
-    join_link = Routes.startpage_url(socket, :index, game.id)
-    Game.notify(game_id, current_player.id, [:player, :joined])
 
-    {:ok, assign(socket, game: game, current_player: current_player, join_link: join_link)}
+    case Game.get_game_by_id(game_id) do
+      nil ->
+        {:ok, redirect(socket, to: Routes.startpage_path(socket, :index))}
+
+      game ->
+        current_player = Enum.find(game.players, fn p -> p.id == player_id end)
+        join_link = Routes.startpage_url(socket, :index, game.id)
+        Game.notify(game_id, current_player.id, [:player, :joined])
+
+        {:ok, assign(socket, game: game, current_player: current_player, join_link: join_link)}
+    end
   end
 
   def handle_info({_, player_id, _}, socket)
