@@ -5,6 +5,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
+      GITHUB_ACTION: true
       MIX_ENV: test
 
     services:
@@ -13,6 +14,7 @@ jobs:
         ports:
           - 5432/tcp
         env:
+          POSTGRES_DB: kitten_pairs_test
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         options: >-
@@ -43,6 +45,11 @@ jobs:
       - name: Check Compile Warnings
         run: mix compile --warnings-as-errors --all-warnings
       - name: Run tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/chat_f_coin_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+          DB_HOSTNAME: localhost
         run: mix test
 
   deploy:
