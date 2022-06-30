@@ -3,10 +3,10 @@
     <h1 class="font-black text-5xl mb-3">kitten pairs</h1>
   </header>
   <section class="lg:flex justify-center items-center">
-    <section class="m-w-96">
+    <section class="max-w-sm">
       <img src="/images/waiting.gif" alt="waiting cat" role="presentation" class="w-full rounded-3xl border-4 border-zinc-900 block mb-4" />
       
-      <%= if @current_player.is_navigator do %>  
+      <%= if @current_player.is_navigator do %>
         <label class="block mb-4">
           <span class="font-zinc-900 block mb-2 text-lg">Share this link with a friend to start the first round:</span>
           <input type="text" value={@join_link} class="w-full box-border px-4 py-3 bg-transparent border-4 border-zinc-900 rounded-3xl text-zinc-900 block font-black text-xl" />

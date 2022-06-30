@@ -45,6 +45,14 @@ defmodule KittenPairsWeb.StartpageController do
         |> put_session(:player_id, player.id)
         |> redirect(to: Routes.live_path(conn, KittenPairsWeb.GameLive, game_id))
 
+      {:error, :too_many_players} ->
+        conn
+        |> put_flash(
+          :error,
+          "Oh no, you can't join the game anymore. Feel free to create a new game and share it with a friend."
+        )
+        |> redirect(to: Routes.startpage_path(conn, :index))
+
       _ ->
         conn
         |> put_flash(:error, "Hm, something went wrong. Pls try again later.")

@@ -44,5 +44,14 @@ defmodule KittenPairsWeb.StartpageControllerTest do
       assert %{:players => players} = Game.get_game_by_id(id)
       assert Enum.any?(players, fn p -> p.id == player_id end)
     end
+
+    test "too many players joining the game", %{conn: conn} do
+      {:ok, game, _player} = Game.create_game("Chi")
+      {:ok, _player} = Game.join_game(game.id, "Can")
+
+      conn = post(conn, Routes.startpage_path(conn, :join, game.id), player: @create_attrs)
+      assert redirected_to(conn) == Routes.startpage_path(conn, :index)
+      assert get_flash(conn, :error) =~ "Oh no, you can't join the game anymore."
+    end
   end
 end
