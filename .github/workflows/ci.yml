@@ -17,9 +17,9 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v1.0.0
-      - uses: actions/setup-elixir@v1.0.0
+      - uses: erlef/setup-beam@v1
         with:
-          otp-version: 25.x
-          elixir-version: 1.13.x
+          otp-version: 25.0
+          elixir-version: 1.13.4
       - run: mix deps.get
       - run: mix test
