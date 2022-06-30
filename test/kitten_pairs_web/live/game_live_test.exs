@@ -23,13 +23,4 @@ defmodule KittenPairsWeb.GameLiveTest do
 
     assert live(conn, "/games/abc") == {:error, {:redirect, %{flash: %{}, to: path}}}
   end
-
-  test "invalid session", %{conn: conn, game: game} do
-    response =
-      conn
-      |> recycle()
-      |> live("/games/#{game.id}")
-
-    assert response == {:error, {:redirect, %{flash: %{}, to: "/"}}}
-  end
 end
