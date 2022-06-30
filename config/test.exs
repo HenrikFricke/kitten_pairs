@@ -6,7 +6,7 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :kitten_pairs, KittenPairs.Repo,
-  url: System.get_env("DATABASE_URL") || "ecto://postgres:postgres@localhost/kitten_pairs_test",
+  url: System.get_env("DATABASE_URL", "ecto://postgres:postgres@localhost/kitten_pairs_test"),
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10,
   migration_primary_key: [name: :id, type: :binary_id],
