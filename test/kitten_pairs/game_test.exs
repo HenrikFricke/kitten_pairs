@@ -26,6 +26,14 @@ defmodule KittenPairs.GameTest do
                  where: p.id == ^player.id and p.game_id == ^game.id and p.is_navigator == false
              )
     end
+
+    test "returns an error if game has already enough players" do
+      {:ok, game} = Repo.insert(%Game.Game{})
+      {:ok, _player} = Game.join_game(game.id, "Chi")
+      {:ok, _player} = Game.join_game(game.id, "Hen")
+
+      assert {:error, :too_many_players} = Game.join_game(game.id, "Can")
+    end
   end
 
   describe "get_game_by_id/1" do

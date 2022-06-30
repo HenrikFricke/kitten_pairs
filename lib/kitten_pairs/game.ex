@@ -20,9 +20,17 @@ defmodule KittenPairs.Game do
   end
 
   def join_game(game_id, player_name) do
-    %Player{}
-    |> Player.changeset(%{game_id: game_id, name: player_name})
-    |> Repo.insert()
+    game = get_game_by_id(game_id)
+
+    cond do
+      length(game.players) < 2 ->
+        %Player{}
+        |> Player.changeset(%{game_id: game_id, name: player_name})
+        |> Repo.insert()
+
+      length(game.players) === 2 ->
+        {:error, :too_many_players}
+    end
   end
 
   def get_game_by_id(game_id) do
