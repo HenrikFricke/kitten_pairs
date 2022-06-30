@@ -1,12 +1,12 @@
 name: Main
 on: push
 
-env:
-  DB_HOST: postgres
-
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      DB_HOST: postgres
+      MIX_ENV: test
 
     services:
       postgres:
