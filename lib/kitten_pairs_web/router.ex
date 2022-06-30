@@ -14,6 +14,10 @@ defmodule KittenPairsWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :auth do
+    plug KittenPairsWeb.AuthPlug
+  end
+
   scope "/", KittenPairsWeb do
     pipe_through :browser
 
@@ -21,8 +25,13 @@ defmodule KittenPairsWeb.Router do
     post "/", StartpageController, :create
     get "/join/:id", StartpageController, :index
     post "/join/:id", StartpageController, :join
+  end
 
-    live "/games/:id", GameLive
+  scope "/games/", KittenPairsWeb do
+    pipe_through :browser
+    pipe_through :auth
+
+    live "/:id", GameLive
   end
 
   # Other scopes may use custom stacks.
