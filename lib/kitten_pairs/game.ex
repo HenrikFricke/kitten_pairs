@@ -5,7 +5,7 @@ defmodule KittenPairs.Game do
 
   alias KittenPairs.Game.{Player, Game}
 
-  def start_new_game(attrs) do
+  def create_game(player_name) do
     {:ok, game} =
       %Game{}
       |> Game.changeset(%{})
@@ -13,15 +13,15 @@ defmodule KittenPairs.Game do
 
     {:ok, player} =
       %Player{}
-      |> Player.changeset(%{game_id: game.id, name: attrs["name"], is_navigator: true})
+      |> Player.changeset(%{game_id: game.id, name: player_name, is_navigator: true})
       |> Repo.insert()
 
-    %{player_id: player.id, game_id: game.id}
+    {:ok, game, player}
   end
 
-  def join_game(game_id, attrs) do
+  def join_game(game_id, player_name) do
     %Player{}
-    |> Player.changeset(%{game_id: game_id, name: attrs["name"]})
+    |> Player.changeset(%{game_id: game_id, name: player_name})
     |> Repo.insert()
   end
 

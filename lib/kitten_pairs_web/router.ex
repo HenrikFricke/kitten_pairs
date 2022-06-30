@@ -18,10 +18,9 @@ defmodule KittenPairsWeb.Router do
     pipe_through :browser
 
     get "/", StartpageController, :index
-    post "/", StartpageController, :start_new_game
-
-    get "/join/:id", StartpageController, :join
-    post "/join/:id", StartpageController, :join_game
+    post "/", StartpageController, :create
+    get "/join/:id", StartpageController, :index
+    post "/join/:id", StartpageController, :join
 
     live "/games/:id", GameLive
   end
