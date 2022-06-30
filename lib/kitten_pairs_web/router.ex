@@ -27,7 +27,7 @@ defmodule KittenPairsWeb.Router do
     post "/join/:id", StartpageController, :join
   end
 
-  scope "/games/", KittenPairsWeb do
+  scope "/games", KittenPairsWeb do
     pipe_through :browser
     pipe_through :auth
 
