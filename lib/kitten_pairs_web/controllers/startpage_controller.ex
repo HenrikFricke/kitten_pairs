@@ -49,7 +49,7 @@ defmodule KittenPairsWeb.StartpageController do
         conn
         |> put_flash(
           :error,
-          "Tha game has already enought players. Please create a new game and share it with a friend."
+          "Oh no, you can't join the game anymore. Feel free to create a new game and share it with a friend."
         )
         |> redirect(to: Routes.startpage_path(conn, :index))
 

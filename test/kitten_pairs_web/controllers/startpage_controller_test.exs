@@ -51,7 +51,7 @@ defmodule KittenPairsWeb.StartpageControllerTest do
 
       conn = post(conn, Routes.startpage_path(conn, :join, game.id), player: @create_attrs)
       assert redirected_to(conn) == Routes.startpage_path(conn, :index)
-      assert get_flash(conn, :error) =~ "Tha game has already enought players."
+      assert get_flash(conn, :error) =~ "Oh no, you can't join the game anymore."
     end
   end
 end
