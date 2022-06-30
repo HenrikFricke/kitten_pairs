@@ -5,7 +5,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      GITHUB_ACTION: true
       MIX_ENV: test
 
     services:
@@ -47,9 +46,6 @@ jobs:
       - name: Run tests
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/kitten_pairs_test
-          DB_USERNAME: postgres
-          DB_PASSWORD: postgres
-          DB_HOSTNAME: localhost
         run: mix test
 
   deploy:
