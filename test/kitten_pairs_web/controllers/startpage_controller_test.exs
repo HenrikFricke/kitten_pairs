@@ -18,7 +18,7 @@ defmodule KittenPairsWeb.StartpageControllerTest do
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.live_path(conn, KittenPairsWeb.GameLive, id)
-      assert %{"player_id" => player_id} = get_session(conn)
+      assert %{"player_id" => _player_id} = get_session(conn)
     end
   end
 
@@ -36,7 +36,7 @@ defmodule KittenPairsWeb.StartpageControllerTest do
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.live_path(conn, KittenPairsWeb.GameLive, id)
-      assert %{"player_id" => player_id} = get_session(conn)
+      assert %{"player_id" => _player_id} = get_session(conn)
     end
 
     test "too many players joining the game", %{conn: conn} do
