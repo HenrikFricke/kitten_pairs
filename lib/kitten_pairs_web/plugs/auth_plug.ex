@@ -1,7 +1,8 @@
 defmodule KittenPairsWeb.AuthPlug do
   import Plug.Conn
   import Phoenix.Controller
-  import KittenPairsWeb.Router.Helpers
+
+  alias KittenPairsWeb.Router.Helpers, as: Routes
 
   def init(_params) do
   end
@@ -10,7 +11,7 @@ defmodule KittenPairsWeb.AuthPlug do
     case Plug.Conn.get_session(conn, :player_id) do
       nil ->
         conn
-        |> redirect(to: startpage_path(conn, :index))
+        |> redirect(to: Routes.startpage_path(conn, :index))
         |> halt()
 
       _ ->
