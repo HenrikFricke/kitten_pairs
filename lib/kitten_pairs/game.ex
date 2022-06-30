@@ -26,7 +26,12 @@ defmodule KittenPairs.Game do
   end
 
   def get_game_by_id(game_id) do
-    Repo.get(Game, game_id) |> Repo.preload(:players)
+    case Repo.get(Game, game_id) do
+      nil -> nil
+      game -> Repo.preload(game, :players)
+    end
+  rescue
+    Ecto.Query.CastError -> nil
   end
 
   def subscribe(game_id) do
