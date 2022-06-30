@@ -45,6 +45,14 @@ defmodule KittenPairsWeb.StartpageController do
         |> put_session(:player_id, player.id)
         |> redirect(to: Routes.live_path(conn, KittenPairsWeb.GameLive, game_id))
 
+      {:error, :unknown_game} ->
+        conn
+        |> put_flash(
+          :error,
+          "Oh no, the game doesn't exist. Feel free to create a new game and share it with a friend."
+        )
+        |> redirect(to: Routes.startpage_path(conn, :index))
+
       {:error, :too_many_players} ->
         conn
         |> put_flash(

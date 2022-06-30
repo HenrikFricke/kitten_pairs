@@ -34,6 +34,10 @@ defmodule KittenPairs.GameTest do
 
       assert {:error, :too_many_players} = Game.join_game(game.id, "Can")
     end
+
+    test "returns an error if the game is unknown" do
+      assert {:error, :unknown_game} = Game.join_game("abc", "Chi")
+    end
   end
 
   describe "get_game_by_id/1" do

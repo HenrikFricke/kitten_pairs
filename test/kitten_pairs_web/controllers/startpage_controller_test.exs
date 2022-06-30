@@ -18,10 +18,7 @@ defmodule KittenPairsWeb.StartpageControllerTest do
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.live_path(conn, KittenPairsWeb.GameLive, id)
-
       assert %{"player_id" => player_id} = get_session(conn)
-      assert %{:players => players} = Game.get_game_by_id(id)
-      assert Enum.any?(players, fn p -> p.id == player_id end)
     end
   end
 
@@ -39,10 +36,7 @@ defmodule KittenPairsWeb.StartpageControllerTest do
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.live_path(conn, KittenPairsWeb.GameLive, id)
-
       assert %{"player_id" => player_id} = get_session(conn)
-      assert %{:players => players} = Game.get_game_by_id(id)
-      assert Enum.any?(players, fn p -> p.id == player_id end)
     end
 
     test "too many players joining the game", %{conn: conn} do
@@ -52,6 +46,12 @@ defmodule KittenPairsWeb.StartpageControllerTest do
       conn = post(conn, Routes.startpage_path(conn, :join, game.id), player: @create_attrs)
       assert redirected_to(conn) == Routes.startpage_path(conn, :index)
       assert get_flash(conn, :error) =~ "Oh no, you can't join the game anymore."
+    end
+
+    test "unknown game id", %{conn: conn} do
+      conn = post(conn, Routes.startpage_path(conn, :join, "abc"), player: @create_attrs)
+      assert redirected_to(conn) == Routes.startpage_path(conn, :index)
+      assert get_flash(conn, :error) =~ "Oh no, the game doesn't exist."
     end
   end
 end
