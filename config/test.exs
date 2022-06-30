@@ -9,7 +9,7 @@ config :kitten_pairs, KittenPairs.Repo,
   url: System.get_env("DATABASE_URL") || "ecto://postgres:postgres@localhost/kitten_pairs_test",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10,
-  migration_primary_key: [name: :id, type: :binary_id]
+  migration_primary_key: [name: :id, type: :binary_id],
   show_sensitive_data_on_connection_error: true
 
 # We don't run a server during test. If one is required,
