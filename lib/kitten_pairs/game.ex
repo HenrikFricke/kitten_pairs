@@ -3,7 +3,7 @@ defmodule KittenPairs.Game do
   alias KittenPairs.Repo
   alias Phoenix.PubSub
 
-  alias KittenPairs.Game.{Player, Game}
+  alias KittenPairs.Game.{Player, Game, Round}
 
   def create_game(player_name) do
     {:ok, game} =
@@ -42,6 +42,12 @@ defmodule KittenPairs.Game do
     end
   rescue
     Ecto.Query.CastError -> nil
+  end
+
+  def create_round(game_id) do
+    %Round{}
+    |> Round.changeset(%{game_id: game_id})
+    |> Repo.insert()
   end
 
   def subscribe(game_id) do

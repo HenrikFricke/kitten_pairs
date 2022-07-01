@@ -57,4 +57,15 @@ defmodule KittenPairs.GameTest do
       assert Game.get_game_by_id("X8kY6JpsQ5Kgf9fu4uBZ4F") == nil
     end
   end
+
+  describe "create_round/1" do
+    test "creates a round" do
+      {:ok, game} = Repo.insert(%Game.Game{})
+      {:ok, round} = Game.create_round(game.id)
+
+      assert Repo.exists?(
+               from r in Game.Round, where: r.id == ^round.id and r.game_id == ^game.id
+             )
+    end
+  end
 end
