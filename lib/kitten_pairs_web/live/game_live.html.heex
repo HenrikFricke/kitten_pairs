@@ -1,22 +1,26 @@
 <section class="grid grid-rows-[auto_1fr] p-4 w-screen h-screen">
   <header>
     <h1 class="font-black text-5xl mb-3">kitten pairs</h1>
-  </header>
-  <section class="lg:flex justify-center items-center">
-    <section class="max-w-sm">
-      <img src="/images/waiting.gif" alt="waiting cat" role="presentation" class="w-full rounded-3xl border-4 border-zinc-900 block mb-4" />
-      
-      <%= if @current_player.is_navigator do %>
-        <label class="block mb-4">
-          <span class="font-zinc-900 block mb-2 text-lg">Share this link with a friend to start the first round:</span>
-          <input type="text" value={@join_link} class="w-full box-border px-4 py-3 bg-transparent border-4 border-zinc-900 rounded-3xl text-zinc-900 block font-black text-xl" />
-        </label>
-        <button class="w-full uppercase rounded-3xl bg-pink-300 py-3 box-border font-black text-2xl disabled:opacity-50" disabled={length(@game.players) == 1}>Start round</button>
-      <% end %>
+  </header>  
+  <%= if @last_round == nil do %>
+    <section class="lg:flex justify-center items-center">
+      <section class="max-w-sm">
+        <img src="/images/waiting.gif" alt="waiting cat" role="presentation" class="w-full rounded-3xl border-4 border-zinc-900 block mb-4" />
+        
+        <%= if @current_player.is_navigator do %>
+          <label class="block mb-4">
+            <span class="font-zinc-900 block mb-2 text-lg">Share this link with a friend to start the first round:</span>
+            <input type="text" value={@join_link} class="w-full box-border px-4 py-3 bg-transparent border-4 border-zinc-900 rounded-3xl text-zinc-900 block font-black text-xl" />
+          </label>
+          <button id="create_round" phx-click="create_round" class="w-full uppercase rounded-3xl bg-pink-300 py-3 box-border font-black text-2xl disabled:opacity-50" disabled={length(@game.players) == 1}>Start round</button>
+        <% end %>
 
-      <%= if !@current_player.is_navigator do %>
-        <span class="font-zinc-900 block mb-2 text-lg">Waiting for the first round …</span>
-      <% end %>
+        <%= if !@current_player.is_navigator do %>
+          <span class="font-zinc-900 block mb-2 text-lg">Waiting for the first round …</span>
+        <% end %>
+      </section>
     </section>
-  </section>
+  <% else %>
+    round test
+  <% end %>
 </section>
