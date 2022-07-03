@@ -50,6 +50,13 @@ defmodule KittenPairs.Game do
     |> Repo.insert()
   end
 
+  def get_last_round(game_id) do
+    Round
+    |> from(where: [game_id: ^game_id])
+    |> last(:inserted_at)
+    |> Repo.one()
+  end
+
   def subscribe(game_id) do
     PubSub.subscribe(KittenPairs.PubSub, "games:#{game_id}")
   end

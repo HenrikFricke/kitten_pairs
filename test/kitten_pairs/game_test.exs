@@ -68,4 +68,21 @@ defmodule KittenPairs.GameTest do
              )
     end
   end
+
+  describe "get_last_round/1" do
+    test "returns the last round" do
+      {:ok, game} = Repo.insert(%Game.Game{})
+      {:ok, _round1} = Game.create_round(game.id)
+      {:ok, _round2} = Game.create_round(game.id)
+      {:ok, round3} = Game.create_round(game.id)
+
+      assert Game.get_last_round(game.id).id == round3.id
+    end
+
+    test "returns nil for empty list of rounds" do
+      {:ok, game} = Repo.insert(%Game.Game{})
+
+      assert Game.get_last_round(game.id) == nil
+    end
+  end
 end
