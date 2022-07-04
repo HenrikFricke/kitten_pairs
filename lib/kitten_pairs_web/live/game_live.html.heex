@@ -21,6 +21,10 @@
       </section>
     </section>
   <% else %>
-    round test
+    <ul>
+      <%= for card <- @last_round.cards do %>
+        <li><%= card.type %></li>
+      <% end %>
+    </ul>
   <% end %>
 </section>

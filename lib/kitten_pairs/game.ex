@@ -3,7 +3,7 @@ defmodule KittenPairs.Game do
   alias KittenPairs.Repo
   alias Phoenix.PubSub
 
-  alias KittenPairs.Game.{Player, Game, Round}
+  alias KittenPairs.Game.{Player, Game, Round, Card}
 
   def create_game(player_name) do
     {:ok, game} =
@@ -36,18 +36,26 @@ defmodule KittenPairs.Game do
   end
 
   def get_game_by_id(game_id) do
-    case Repo.get(Game, game_id) do
-      nil -> nil
-      game -> Repo.preload(game, :players)
-    end
+    Game
+    |> Repo.get(game_id)
+    |> Repo.preload(:players)
   rescue
     Ecto.Query.CastError -> nil
   end
 
   def create_round(game_id) do
-    %Round{}
-    |> Round.changeset(%{game_id: game_id})
-    |> Repo.insert()
+    {:ok, round} =
+      %Round{}
+      |> Round.changeset(%{game_id: game_id})
+      |> Repo.insert()
+
+    Enum.to_list(0..15)
+    |> Enum.shuffle()
+    |> Enum.each(fn card ->
+      Repo.insert(Card.changeset(%Card{}, %{type: "kitten#{rem(card, 8)}", round_id: round.id}))
+    end)
+
+    {:ok, round}
   end
 
   def get_last_round(game_id) do
@@ -55,6 +63,7 @@ defmodule KittenPairs.Game do
     |> from(where: [game_id: ^game_id])
     |> last(:inserted_at)
     |> Repo.one()
+    |> Repo.preload(:cards)
   end
 
   def subscribe(game_id) do

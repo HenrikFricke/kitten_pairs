@@ -23,9 +23,11 @@ defmodule KittenPairsWeb.GameLiveTest do
       {:ok, _player} = Game.join_game(game.id, "Hen")
       {:ok, view, _html} = live(conn, "/games/#{game.id}")
 
-      assert view
-             |> element("button#create_round")
-             |> render_click() =~ "round test"
+      view
+      |> element("button#create_round")
+      |> render_click()
+
+      assert Game.get_last_round(game.id) != nil
     end
 
     test "unknown game id", %{conn: conn} do
@@ -46,7 +48,7 @@ defmodule KittenPairsWeb.GameLiveTest do
     test "initial render", %{conn: conn, game: game} do
       {:ok, _view, html} = live(conn, "/games/#{game.id}")
 
-      assert html =~ "round test"
+      assert html =~ "kitten0"
     end
   end
 end

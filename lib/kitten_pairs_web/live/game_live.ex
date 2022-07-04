@@ -32,16 +32,9 @@ defmodule KittenPairsWeb.GameLive do
     game_id = socket.assigns.game.id
     current_player_id = socket.assigns.current_player.id
 
-    case Game.create_round(game_id) do
-      {:ok, round} ->
-        Game.notify(game_id, current_player_id, [:round, :created])
+    Game.create_round(game_id)
+    Game.notify(game_id, current_player_id, [:round, :created])
 
-        {:noreply, assign(socket, :last_round, round)}
-    end
-  end
-
-  def handle_info({_, player_id, _}, socket)
-      when current_player?(socket, player_id) do
     {:noreply, socket}
   end
 
@@ -53,11 +46,15 @@ defmodule KittenPairsWeb.GameLive do
     {:noreply, assign(socket, :game, game)}
   end
 
-  def handle_info({[:round, :created], player_id, _}, socket)
-      when not current_player?(socket, player_id) do
+  def handle_info({[:round, :created], _player_id, _}, socket) do
     game_id = socket.assigns.game.id
     last_round = Game.get_last_round(game_id)
 
     {:noreply, assign(socket, :last_round, last_round)}
+  end
+
+  def handle_info({_, player_id, _}, socket)
+      when current_player?(socket, player_id) do
+    {:noreply, socket}
   end
 end

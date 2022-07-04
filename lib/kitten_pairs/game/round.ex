@@ -2,10 +2,11 @@ defmodule KittenPairs.Game.Round do
   use KittenPairs.Schema
   import Ecto.Changeset
 
-  alias KittenPairs.Game.Game
+  alias KittenPairs.Game.{Game, Card}
 
   schema "rounds" do
     belongs_to :game, Game, foreign_key: :game_id, references: :id
+    has_many :cards, Card
 
     timestamps()
   end
