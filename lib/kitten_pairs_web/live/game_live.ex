@@ -13,16 +13,28 @@ defmodule KittenPairsWeb.GameLive do
         {:ok, redirect(socket, to: Routes.startpage_path(socket, :index))}
 
       game ->
+        last_round = Game.get_last_round(game.id)
         current_player = Enum.find(game.players, fn p -> p.id == player_id end)
         join_link = Routes.startpage_url(socket, :index, game.id)
         Game.notify(game_id, current_player.id, [:player, :joined])
 
-        {:ok, assign(socket, game: game, current_player: current_player, join_link: join_link)}
+        {:ok,
+         assign(socket,
+           game: game,
+           current_player: current_player,
+           join_link: join_link,
+           last_round: last_round
+         )}
     end
   end
 
-  def handle_info({_, player_id, _}, socket)
-      when current_player?(socket, player_id) do
+  def handle_event("create_round", _value, socket) do
+    game_id = socket.assigns.game.id
+    current_player_id = socket.assigns.current_player.id
+
+    Game.create_round(game_id)
+    Game.notify(game_id, current_player_id, [:round, :created])
+
     {:noreply, socket}
   end
 
@@ -30,6 +42,19 @@ defmodule KittenPairsWeb.GameLive do
       when not current_player?(socket, player_id) do
     game_id = socket.assigns.game.id
     game = Game.get_game_by_id(game_id)
+
     {:noreply, assign(socket, :game, game)}
+  end
+
+  def handle_info({[:round, :created], _player_id, _}, socket) do
+    game_id = socket.assigns.game.id
+    last_round = Game.get_last_round(game_id)
+
+    {:noreply, assign(socket, :last_round, last_round)}
+  end
+
+  def handle_info({_, player_id, _}, socket)
+      when current_player?(socket, player_id) do
+    {:noreply, socket}
   end
 end

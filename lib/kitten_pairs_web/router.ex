@@ -32,6 +32,7 @@ defmodule KittenPairsWeb.Router do
     pipe_through :auth
 
     live "/:id", GameLive
+    live "/:id/rounds/:round_id", GameLive
   end
 
   # Other scopes may use custom stacks.
