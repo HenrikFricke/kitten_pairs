@@ -1,9 +1,9 @@
-<section class="grid grid-rows-[auto_1fr] p-4 w-screen h-screen">
-  <header>
+<section class="grid grid-rows-[auto_1fr_1fr_1fr_1fr] grid-cols-4 p-4 h-screen">
+  <header class="row-start-1 col-start-1 col-span-4">
     <h1 class="font-black text-5xl mb-3">kitten pairs</h1>
   </header>  
   <%= if @last_round == nil do %>
-    <section class="lg:flex justify-center items-center">
+    <section class="col-span-4 row-span-4 lg:flex justify-center items-center">
       <section class="max-w-sm">
         <img src="/images/waiting.gif" alt="waiting cat" role="presentation" class="w-full rounded-3xl border-4 border-zinc-900 block mb-4" />
         
@@ -21,10 +21,10 @@
       </section>
     </section>
   <% else %>
-    <ul>
-      <%= for card <- @last_round.cards do %>
-        <li><%= card.type %></li>
-      <% end %>
-    </ul>
+  <%= for card <- @last_round.cards do %>
+    <button class="col-span-1 row-span-1 overflow-hidden min-width-0 rounded-3xl border-4 border-zinc-900 m-2 bg-pink-300 focus:scale-105 hover:scale-105 transform-gpu transition duration-200">
+      <img class={"w-full h-full object-cover #{if !card.is_visible do 'hidden' end}"} src={"/images/kittens/#{card.type}.jpg"} role="presentation" />
+    </button>
+    <% end %>
   <% end %>
 </section>
