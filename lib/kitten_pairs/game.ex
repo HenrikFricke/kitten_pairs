@@ -3,7 +3,7 @@ defmodule KittenPairs.Game do
   alias KittenPairs.Repo
   alias Phoenix.PubSub
 
-  alias KittenPairs.Game.{Player, Game, Round, Card}
+  alias KittenPairs.Game.{Player, Game, Round, Card, Turn}
 
   def create_game(player_name) do
     {:ok, game} =
@@ -43,7 +43,7 @@ defmodule KittenPairs.Game do
     Ecto.Query.CastError -> nil
   end
 
-  def create_round(game_id) do
+  def create_round(game_id, player_id) do
     {:ok, round} =
       %Round{}
       |> Round.changeset(%{game_id: game_id})
@@ -54,6 +54,10 @@ defmodule KittenPairs.Game do
     |> Enum.each(fn card ->
       Repo.insert(Card.changeset(%Card{}, %{type: "kitten#{rem(card, 8)}", round_id: round.id}))
     end)
+
+    %Turn{}
+    |> Turn.changeset(%{round_id: round.id, player_id: player_id})
+    |> Repo.insert()
 
     {:ok, round}
   end

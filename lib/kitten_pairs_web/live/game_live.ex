@@ -32,7 +32,7 @@ defmodule KittenPairsWeb.GameLive do
     game_id = socket.assigns.game.id
     current_player_id = socket.assigns.current_player.id
 
-    Game.create_round(game_id)
+    Game.create_round(game_id, current_player_id)
     Game.notify(game_id, current_player_id, [:round, :created])
 
     {:noreply, socket}
