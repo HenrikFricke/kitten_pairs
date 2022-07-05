@@ -67,7 +67,24 @@ defmodule KittenPairs.Game do
     |> from(where: [game_id: ^game_id])
     |> last(:inserted_at)
     |> Repo.one()
-    |> Repo.preload(:cards)
+    |> Repo.preload(
+      turns:
+        from(
+          t in Turn,
+          order_by: [desc: t.inserted_at]
+        ),
+      cards:
+        from(
+          c in Card,
+          order_by: [desc: c.inserted_at]
+        )
+    )
+  end
+
+  def pick_card(card_id) do
+    Repo.get(Card, card_id)
+    |> Card.changeset(%{is_visible: true})
+    |> Repo.update()
   end
 
   def subscribe(game_id) do

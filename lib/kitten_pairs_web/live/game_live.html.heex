@@ -22,7 +22,12 @@
     </section>
   <% else %>
   <%= for card <- @last_round.cards do %>
-    <button class="col-span-1 row-span-1 overflow-hidden min-width-0 rounded-3xl border-4 border-zinc-900 m-2 bg-pink-300 focus:scale-105 hover:scale-105 transform-gpu transition duration-200">
+    <button 
+      phx-click="pick_card"
+      phx-value-id={card.id}
+      disabled={@current_player.id != Enum.at(@last_round.turns, 0).player_id or card.is_visible}
+      class="col-span-1 row-span-1 overflow-hidden min-width-0 rounded-3xl border-4 border-zinc-900 m-2 bg-pink-300 focus:scale-105 hover:scale-105 transform-gpu transition duration-200 disabled:transform-none"
+    >
       <img class={"w-full h-full object-cover #{if !card.is_visible do 'hidden' end}"} src={"/images/kittens/#{card.type}.jpg"} role="presentation" />
     </button>
     <% end %>

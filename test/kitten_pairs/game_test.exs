@@ -106,5 +106,12 @@ defmodule KittenPairs.GameTest do
 
       assert length(last_round.cards) > 0
     end
+
+    test "preloads turns", %{game: game, player: player} do
+      {:ok, _round1} = Game.create_round(game.id, player.id)
+      last_round = Game.get_last_round(game.id)
+
+      assert length(last_round.turns) > 0
+    end
   end
 end

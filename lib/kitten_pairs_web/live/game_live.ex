@@ -38,6 +38,16 @@ defmodule KittenPairsWeb.GameLive do
     {:noreply, socket}
   end
 
+  def handle_event("pick_card", %{"id" => card_id}, socket) do
+    game_id = socket.assigns.game.id
+    current_player_id = socket.assigns.current_player.id
+
+    Game.pick_card(card_id)
+    Game.notify(game_id, current_player_id, [:card, :picked])
+
+    {:noreply, socket}
+  end
+
   def handle_info({[:player, :joined], player_id, _}, socket)
       when not current_player?(socket, player_id) do
     game_id = socket.assigns.game.id
@@ -47,6 +57,13 @@ defmodule KittenPairsWeb.GameLive do
   end
 
   def handle_info({[:round, :created], _player_id, _}, socket) do
+    game_id = socket.assigns.game.id
+    last_round = Game.get_last_round(game_id)
+
+    {:noreply, assign(socket, :last_round, last_round)}
+  end
+
+  def handle_info({[:card, :picked], _player_id, _}, socket) do
     game_id = socket.assigns.game.id
     last_round = Game.get_last_round(game_id)
 
