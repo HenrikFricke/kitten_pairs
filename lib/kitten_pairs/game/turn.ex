@@ -2,13 +2,12 @@ defmodule KittenPairs.Game.Turn do
   use KittenPairs.Schema
   import Ecto.Changeset
 
-  alias KittenPairs.Game.{Round, Player}
+  alias KittenPairs.Game.{Round, Player, Card, TurnCard}
 
   schema "turns" do
     belongs_to :round, Round
     belongs_to :player, Player
-    field :first_card, :id
-    field :second_card, :id
+    many_to_many :cards, Card, join_through: TurnCard
 
     timestamps()
   end
@@ -16,7 +15,7 @@ defmodule KittenPairs.Game.Turn do
   @doc false
   def changeset(turn, attrs) do
     turn
-    |> cast(attrs, [:round_id, :player_id, :first_card, :second_card])
+    |> cast(attrs, [:round_id, :player_id])
     |> validate_required([:round_id, :player_id])
   end
 end

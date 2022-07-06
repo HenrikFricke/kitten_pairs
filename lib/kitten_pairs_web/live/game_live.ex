@@ -14,8 +14,10 @@ defmodule KittenPairsWeb.GameLive do
 
       game ->
         last_round = Game.get_last_round(game.id)
+        last_turn = if last_round, do: Game.get_last_turn(last_round.id), else: nil
         current_player = Enum.find(game.players, fn p -> p.id == player_id end)
         join_link = Routes.startpage_url(socket, :index, game.id)
+
         Game.notify(game_id, current_player.id, [:player, :joined])
 
         {:ok,
@@ -23,7 +25,8 @@ defmodule KittenPairsWeb.GameLive do
            game: game,
            current_player: current_player,
            join_link: join_link,
-           last_round: last_round
+           last_round: last_round,
+           last_turn: last_turn
          )}
     end
   end
@@ -39,11 +42,23 @@ defmodule KittenPairsWeb.GameLive do
   end
 
   def handle_event("pick_card", %{"id" => card_id}, socket) do
+    IO.inspect("fnlf")
+
     game_id = socket.assigns.game.id
+    last_round = socket.assigns.last_round
+    last_turn = socket.assigns.last_turn
     current_player_id = socket.assigns.current_player.id
 
-    Game.pick_card(card_id)
+    Game.pick_card(last_turn.id, card_id)
     Game.notify(game_id, current_player_id, [:card, :picked])
+
+    if length(last_turn.cards) == 1 do
+      Task.start(fn ->
+        Process.sleep(1000)
+        Game.complete_turn(game_id, last_round.id, last_turn.id)
+        Game.notify(game_id, current_player_id, [:turn, :completed])
+      end)
+    end
 
     {:noreply, socket}
   end
@@ -59,15 +74,25 @@ defmodule KittenPairsWeb.GameLive do
   def handle_info({[:round, :created], _player_id, _}, socket) do
     game_id = socket.assigns.game.id
     last_round = Game.get_last_round(game_id)
+    last_turn = Game.get_last_turn(last_round.id)
 
-    {:noreply, assign(socket, :last_round, last_round)}
+    {:noreply, assign(socket, last_round: last_round, last_turn: last_turn)}
   end
 
   def handle_info({[:card, :picked], _player_id, _}, socket) do
     game_id = socket.assigns.game.id
     last_round = Game.get_last_round(game_id)
+    last_turn = Game.get_last_turn(last_round.id)
 
-    {:noreply, assign(socket, :last_round, last_round)}
+    {:noreply, assign(socket, last_round: last_round, last_turn: last_turn)}
+  end
+
+  def handle_info({[:turn, :completed], _player_id, _}, socket) do
+    game_id = socket.assigns.game.id
+    last_round = Game.get_last_round(game_id)
+    last_turn = Game.get_last_turn(last_round.id)
+
+    {:noreply, assign(socket, last_round: last_round, last_turn: last_turn)}
   end
 
   def handle_info({_, player_id, _}, socket)

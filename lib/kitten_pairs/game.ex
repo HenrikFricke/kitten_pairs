@@ -68,11 +68,6 @@ defmodule KittenPairs.Game do
     |> last(:inserted_at)
     |> Repo.one()
     |> Repo.preload(
-      turns:
-        from(
-          t in Turn,
-          order_by: [desc: t.inserted_at]
-        ),
       cards:
         from(
           c in Card,
@@ -81,10 +76,51 @@ defmodule KittenPairs.Game do
     )
   end
 
-  def pick_card(card_id) do
-    Repo.get(Card, card_id)
+  def get_last_turn(round_id) do
+    Turn
+    |> from(where: [round_id: ^round_id])
+    |> last(:inserted_at)
+    |> Repo.one()
+    |> Repo.preload(:cards)
+  end
+
+  def pick_card(turn_id, card_id) do
+    card = Repo.get(Card, card_id) |> Repo.preload(:turns)
+    turn = Repo.get(Turn, turn_id)
+
+    card
     |> Card.changeset(%{is_visible: true})
+    |> Ecto.Changeset.put_assoc(:turns, [turn | card.turns])
     |> Repo.update()
+  end
+
+  def complete_turn(game_id, round_id, turn_id) do
+    game = Repo.get(Game, game_id) |> Repo.preload(:players)
+    round = Repo.get(Round, round_id) |> Repo.preload(:cards)
+    turn = Repo.get(Turn, turn_id) |> Repo.preload(:cards)
+    first_card = Enum.at(turn.cards, 0)
+    second_card = Enum.at(turn.cards, 1)
+    is_match = first_card.type == second_card.type
+    num_of_open_pairs = length(Enum.filter(round.cards, fn c -> !c.is_visible end)) / 2
+
+    next_player_id =
+      if is_match,
+        do: turn.player_id,
+        else: Enum.find(game.players, fn p -> p.id != turn.player_id end).id
+
+    first_card
+    |> Card.changeset(%{is_visible: is_match})
+    |> Repo.update()
+
+    second_card
+    |> Card.changeset(%{is_visible: is_match})
+    |> Repo.update()
+
+    if num_of_open_pairs >= 1 do
+      %Turn{}
+      |> Turn.changeset(%{round_id: round_id, player_id: next_player_id})
+      |> Repo.insert()
+    end
   end
 
   def subscribe(game_id) do
