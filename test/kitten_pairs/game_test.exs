@@ -120,4 +120,83 @@ defmodule KittenPairs.GameTest do
       assert length(last_round.cards) == 1
     end
   end
+
+  describe "complete_turn/1" do
+    test "keeps the cards visible if it's a match" do
+      game = insert(:game)
+      round = insert(:round, game_id: game.id)
+      insert(:player, game_id: game.id)
+      insert(:player, game_id: game.id)
+      card1 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
+      card2 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
+      turn = insert(:turn, round_id: round.id, cards: [card1, card2])
+
+      Game.complete_turn(turn.id)
+
+      assert Repo.get_by(Game.Card, id: card1.id, is_visible: true)
+      assert Repo.get_by(Game.Card, id: card2.id, is_visible: true)
+    end
+
+    test "hides the cards if it's not a match" do
+      game = insert(:game)
+      round = insert(:round, game_id: game.id)
+      insert(:player, game_id: game.id)
+      insert(:player, game_id: game.id)
+      card1 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
+      card2 = insert(:card, round_id: round.id, type: "def", is_visible: true)
+      turn = insert(:turn, round_id: round.id, cards: [card1, card2])
+
+      Game.complete_turn(turn.id)
+
+      assert Repo.get_by(Game.Card, id: card1.id, is_visible: false)
+      assert Repo.get_by(Game.Card, id: card2.id, is_visible: false)
+    end
+
+    test "creates a new turn if cards available" do
+      game = insert(:game)
+      round = insert(:round, game_id: game.id)
+      player1 = insert(:player, game_id: game.id)
+      card1 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
+      card2 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
+      turn = insert(:turn, round_id: round.id, cards: [card1, card2], player_id: player1.id)
+
+      insert(:player, game_id: game.id)
+      insert(:card, round_id: round.id, is_visible: false)
+      insert(:card, round_id: round.id, is_visible: false)
+
+      Game.complete_turn(turn.id)
+
+      assert length(Repo.all(Game.Turn, round_id: round.id)) == 2
+    end
+
+    test "creates not a new turn if no cards available" do
+      game = insert(:game)
+      round = insert(:round, game_id: game.id)
+      insert(:player, game_id: game.id)
+      insert(:player, game_id: game.id)
+      card1 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
+      card2 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
+      turn = insert(:turn, round_id: round.id, cards: [card1, card2])
+
+      Game.complete_turn(turn.id)
+
+      assert length(Repo.all(Game.Turn, round_id: round.id)) == 1
+    end
+
+    test "creates a turn with another player if no match" do
+      game = insert(:game)
+      round = insert(:round, game_id: game.id)
+      player1 = insert(:player, game_id: game.id)
+      player2 = insert(:player, game_id: game.id)
+      insert(:card, round_id: round.id, is_visible: false)
+      insert(:card, round_id: round.id, is_visible: false)
+      card1 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
+      card2 = insert(:card, round_id: round.id, type: "def", is_visible: true)
+      turn = insert(:turn, round_id: round.id, cards: [card1, card2], player_id: player1.id)
+
+      Game.complete_turn(turn.id)
+
+      assert Repo.get_by(Game.Turn, round_id: round.id, player_id: player2.id)
+    end
+  end
 end

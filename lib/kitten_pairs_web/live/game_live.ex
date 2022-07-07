@@ -42,10 +42,7 @@ defmodule KittenPairsWeb.GameLive do
   end
 
   def handle_event("pick_card", %{"id" => card_id}, socket) do
-    IO.inspect("fnlf")
-
     game_id = socket.assigns.game.id
-    last_round = socket.assigns.last_round
     last_turn = socket.assigns.last_turn
     current_player_id = socket.assigns.current_player.id
 
@@ -55,7 +52,7 @@ defmodule KittenPairsWeb.GameLive do
     if length(last_turn.cards) == 1 do
       Task.start(fn ->
         Process.sleep(1000)
-        Game.complete_turn(game_id, last_round.id, last_turn.id)
+        Game.complete_turn(last_turn.id)
         Game.notify(game_id, current_player_id, [:turn, :completed])
       end)
     end
