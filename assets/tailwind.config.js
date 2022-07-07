@@ -12,6 +12,15 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Alegreya Sans', ...defaultTheme.fontFamily.sans],
+      },
+      keyframes: {
+        'gentle-pulse': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(0.98)' },
+        }
+      },
+      animation: {
+        'gentle-pulse': 'gentle-pulse 700ms ease-in-out infinite',
       }
     },
   },
