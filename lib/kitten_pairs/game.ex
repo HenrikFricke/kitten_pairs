@@ -3,7 +3,7 @@ defmodule KittenPairs.Game do
   alias KittenPairs.Repo
   alias Phoenix.PubSub
 
-  alias KittenPairs.Game.{Player, Game, Round, Card, Turn, TurnCard}
+  alias KittenPairs.Game.{Player, Game, Round, Card, Turn}
 
   def create_game(player_name) do
     Ecto.Multi.new()
