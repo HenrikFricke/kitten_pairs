@@ -56,6 +56,11 @@ defmodule KittenPairsWeb.StartpageController do
         )
         |> redirect(to: Routes.startpage_path(conn, :index))
 
+      {:error, :player, _changeset, _changes_so_far} ->
+        conn
+        |> put_flash(:error, "Your name can have at most 8 characters 😇")
+        |> redirect(to: Routes.startpage_path(conn, :index))
+
       _ ->
         conn
         |> put_flash(:error, "Hm, something went wrong. Pls try again later.")
