@@ -5,7 +5,7 @@ defmodule KittenPairsWeb.GameLiveTest do
   alias KittenPairs.Game
 
   setup %{conn: conn} do
-    {:ok, game, player} = Game.create_game("Chi")
+    {:ok, %{game: game, player: player}} = Game.create_game("Chi")
     conn = init_test_session(conn, player_id: player.id)
 
     %{conn: conn, game: game, player: player}

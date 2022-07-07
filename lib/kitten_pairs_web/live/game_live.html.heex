@@ -1,7 +1,19 @@
 <section class="grid grid-rows-[auto_1fr_1fr_1fr_1fr] grid-cols-4 p-2 h-screen">
-  <header class="row-start-1 col-start-1 col-span-4">
-    <h1 class="font-black text-5xl py-2 ml-1">kitten pairs</h1>
-  </header>  
+  <header class="row-start-1 col-start-1 col-span-4 flex lg:justify-between items-center pl-1 pr-2 py-2">
+    <h1 class={["lg:block font-black text-5xl"] ++ [(if length(@game.players) > 1, do: "hidden")]}>
+      kitten pairs
+    </h1>
+    <%= if length(@game.players) > 1 do %>
+      <section class="w-full flex justify-between items-center lg:w-auto">
+        <%= for {player, ind} <- @game.players |> Enum.with_index do %>
+          <span class="font-black text-2xl lg:text-3xl"><%= player.name %></span>
+          <%= if length(@game.players) != ind+1 do %>
+            <span class="hidden lg:inline-block font-black text-2xl mx-2">vs</span>
+          <% end %>
+        <% end %>
+      </section>
+    <% end %>
+  </header>
   <%= if @last_round == nil do %>
     <section class="col-span-4 row-span-4 lg:flex justify-center items-center">
       <section class="max-w-sm">

@@ -6,17 +6,13 @@ defmodule KittenPairs.Game do
   alias KittenPairs.Game.{Player, Game, Round, Card, Turn}
 
   def create_game(player_name) do
-    {:ok, game} =
-      %Game{}
-      |> Game.changeset(%{})
-      |> Repo.insert()
-
-    {:ok, player} =
+    Ecto.Multi.new()
+    |> Ecto.Multi.insert(:game, %Game{})
+    |> Ecto.Multi.insert(:player, fn %{game: game} ->
       %Player{}
       |> Player.changeset(%{game_id: game.id, name: player_name, is_navigator: true})
-      |> Repo.insert()
-
-    {:ok, game, player}
+    end)
+    |> Repo.transaction()
   end
 
   def join_game(game_id, player_name) do

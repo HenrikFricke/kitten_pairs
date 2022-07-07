@@ -14,12 +14,17 @@ defmodule KittenPairsWeb.StartpageController do
     )
   end
 
-  def create(conn, %{"player" => player}) do
-    case Game.create_game(player["name"]) do
-      {:ok, game, player} ->
+  def create(conn, %{"player" => p}) do
+    case Game.create_game(p["name"]) do
+      {:ok, %{game: game, player: player}} ->
         conn
         |> put_session(:player_id, player.id)
         |> redirect(to: Routes.live_path(conn, KittenPairsWeb.GameLive, game.id))
+
+      {:error, :player, _changeset, _changes_so_far} ->
+        conn
+        |> put_flash(:error, "Your name can have at most 8 characters 😇")
+        |> redirect(to: Routes.startpage_path(conn, :index))
 
       _ ->
         conn

@@ -4,9 +4,8 @@ defmodule KittenPairs.GameTest do
   alias KittenPairs.Game
 
   setup do
-    {:ok, game, player} = Game.create_game("Hen")
-
-    %{game: game, player: player}
+    {:ok, response} = Game.create_game("Hen")
+    response
   end
 
   describe "create_game/1" do
@@ -17,6 +16,16 @@ defmodule KittenPairs.GameTest do
                from p in Game.Player,
                  where: p.id == ^player.id and p.game_id == ^game.id and p.is_navigator == true
              )
+    end
+
+    test "fails with long player name" do
+      {:error, :player, changeset, _game} = Game.create_game("abcdefghi")
+      assert %{name: ["should be at most 8 character(s)"]} = errors_on(changeset)
+    end
+
+    test "rollbacks game on failure" do
+      {:error, :player, _changeset, %{game: game}} = Game.create_game("abcdefghi")
+      refute Repo.get(Game.Game, game.id)
     end
   end
 
