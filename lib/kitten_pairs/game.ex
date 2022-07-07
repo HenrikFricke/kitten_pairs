@@ -31,9 +31,9 @@ defmodule KittenPairs.Game do
     end
   end
 
-  def get_game_by_id(game_id) do
+  def get_game_by_id(id) do
     Game
-    |> Repo.get(game_id)
+    |> Repo.get(id)
     |> Repo.preload(:players)
   rescue
     Ecto.Query.CastError -> nil
@@ -91,32 +91,39 @@ defmodule KittenPairs.Game do
   end
 
   def complete_turn(game_id, round_id, turn_id) do
-    game = Repo.get(Game, game_id) |> Repo.preload(:players)
-    round = Repo.get(Round, round_id) |> Repo.preload(:cards)
-    turn = Repo.get(Turn, turn_id) |> Repo.preload(:cards)
+    players =
+      from(p in Player, where: p.game_id == ^game_id)
+      |> Repo.all()
+
+    num_of_open_pairs =
+      from(c in Card, where: c.round_id == ^round_id and not c.is_visible)
+      |> Repo.aggregate(:count)
+      |> div(2)
+
+    turn = Turn |> Repo.get(turn_id) |> Repo.preload(:cards)
+
     first_card = Enum.at(turn.cards, 0)
     second_card = Enum.at(turn.cards, 1)
     is_match = first_card.type == second_card.type
-    num_of_open_pairs = length(Enum.filter(round.cards, fn c -> !c.is_visible end)) / 2
 
     next_player_id =
       if is_match,
         do: turn.player_id,
-        else: Enum.find(game.players, fn p -> p.id != turn.player_id end).id
+        else: Enum.find(players, fn p -> p.id != turn.player_id end).id
 
-    first_card
-    |> Card.changeset(%{is_visible: is_match})
-    |> Repo.update()
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:first_card, Card.changeset(first_card, %{is_visible: is_match}))
+    |> Ecto.Multi.update(:second_card, Card.changeset(second_card, %{is_visible: is_match}))
+    |> Ecto.Multi.run(:new_turn, fn repo, _ ->
+      cond do
+        num_of_open_pairs >= 1 ->
+          repo.insert(Turn.changeset(%Turn{}, %{round_id: round_id, player_id: next_player_id}))
 
-    second_card
-    |> Card.changeset(%{is_visible: is_match})
-    |> Repo.update()
-
-    if num_of_open_pairs >= 1 do
-      %Turn{}
-      |> Turn.changeset(%{round_id: round_id, player_id: next_player_id})
-      |> Repo.insert()
-    end
+        true ->
+          {:ok, %{}}
+      end
+    end)
+    |> Repo.transaction()
   end
 
   def subscribe(game_id) do
