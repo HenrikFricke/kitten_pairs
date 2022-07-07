@@ -90,37 +90,32 @@ defmodule KittenPairs.Game do
     |> Repo.update()
   end
 
-  def complete_turn(game_id, round_id, turn_id) do
-    players =
-      from(p in Player, where: p.game_id == ^game_id)
-      |> Repo.all()
-
-    num_of_open_pairs =
-      from(c in Card, where: c.round_id == ^round_id and not c.is_visible)
-      |> Repo.aggregate(:count)
-      |> div(2)
-
-    turn = Turn |> Repo.get(turn_id) |> Repo.preload(:cards)
+  def complete_turn(turn_id) do
+    turn =
+      Turn
+      |> Repo.get(turn_id)
+      |> Repo.preload([:cards, round: [:cards, game: [:players]]])
 
     first_card = Enum.at(turn.cards, 0)
     second_card = Enum.at(turn.cards, 1)
     is_match = first_card.type == second_card.type
+    is_round_completed = length(Enum.filter(turn.round.cards, fn c -> not c.is_visible end)) == 0
 
     next_player_id =
       if is_match,
         do: turn.player_id,
-        else: Enum.find(players, fn p -> p.id != turn.player_id end).id
+        else: Enum.find(turn.round.game.players, fn p -> p.id != turn.player_id end).id
 
     Ecto.Multi.new()
     |> Ecto.Multi.update(:first_card, Card.changeset(first_card, %{is_visible: is_match}))
     |> Ecto.Multi.update(:second_card, Card.changeset(second_card, %{is_visible: is_match}))
     |> Ecto.Multi.run(:new_turn, fn repo, _ ->
-      cond do
-        num_of_open_pairs >= 1 ->
-          repo.insert(Turn.changeset(%Turn{}, %{round_id: round_id, player_id: next_player_id}))
-
-        true ->
-          {:ok, %{}}
+      unless is_round_completed do
+        repo.insert(
+          Turn.changeset(%Turn{}, %{round_id: turn.round.id, player_id: next_player_id})
+        )
+      else
+        {:ok, %{}}
       end
     end)
     |> Repo.transaction()

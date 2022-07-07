@@ -18,4 +18,8 @@ defmodule KittenPairs.Factory do
   def card_factory do
     %KittenPairs.Game.Card{}
   end
+
+  def turn_factory do
+    %KittenPairs.Game.Turn{}
+  end
 end
