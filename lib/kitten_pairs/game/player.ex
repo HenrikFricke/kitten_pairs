@@ -17,5 +17,6 @@ defmodule KittenPairs.Game.Player do
     player
     |> cast(attrs, [:name, :game_id, :is_navigator])
     |> validate_required([:name])
+    |> validate_length(:name, max: 8)
   end
 end
