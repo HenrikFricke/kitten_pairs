@@ -31,9 +31,9 @@ defmodule KittenPairs.Game do
     end
   end
 
-  def get_game_by_id(game_id) do
+  def get_game_by_id(id) do
     Game
-    |> Repo.get(game_id)
+    |> Repo.get(id)
     |> Repo.preload(:players)
   rescue
     Ecto.Query.CastError -> nil

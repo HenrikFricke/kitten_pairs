@@ -24,6 +24,7 @@ defmodule KittenPairs.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import KittenPairs.DataCase
+      import KittenPairs.Factory
     end
   end
 
