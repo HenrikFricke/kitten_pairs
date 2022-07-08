@@ -5,6 +5,7 @@ defmodule KittenPairs.Game.RoundScore do
 
   alias KittenPairs.Game.{Round, Player}
 
+  @primary_key false
   schema "round_scores" do
     belongs_to :round, Round
     belongs_to :player, Player

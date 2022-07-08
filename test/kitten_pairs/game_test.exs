@@ -125,11 +125,11 @@ defmodule KittenPairs.GameTest do
     test "keeps the cards visible if it's a match" do
       game = insert(:game)
       round = insert(:round, game_id: game.id)
-      insert(:player, game_id: game.id)
+      player = insert(:player, game_id: game.id)
       insert(:player, game_id: game.id)
       card1 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
       card2 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
-      turn = insert(:turn, round_id: round.id, cards: [card1, card2])
+      turn = insert(:turn, round_id: round.id, cards: [card1, card2], player_id: player.id)
 
       Game.complete_turn(turn.id)
 
@@ -140,11 +140,11 @@ defmodule KittenPairs.GameTest do
     test "hides the cards if it's not a match" do
       game = insert(:game)
       round = insert(:round, game_id: game.id)
-      insert(:player, game_id: game.id)
+      player = insert(:player, game_id: game.id)
       insert(:player, game_id: game.id)
       card1 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
       card2 = insert(:card, round_id: round.id, type: "def", is_visible: true)
-      turn = insert(:turn, round_id: round.id, cards: [card1, card2])
+      turn = insert(:turn, round_id: round.id, cards: [card1, card2], player_id: player.id)
 
       Game.complete_turn(turn.id)
 
@@ -172,11 +172,11 @@ defmodule KittenPairs.GameTest do
     test "creates not a new turn if no cards available" do
       game = insert(:game)
       round = insert(:round, game_id: game.id)
-      insert(:player, game_id: game.id)
+      player = insert(:player, game_id: game.id)
       insert(:player, game_id: game.id)
       card1 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
       card2 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
-      turn = insert(:turn, round_id: round.id, cards: [card1, card2])
+      turn = insert(:turn, round_id: round.id, cards: [card1, card2], player_id: player.id)
 
       Game.complete_turn(turn.id)
 
@@ -197,6 +197,36 @@ defmodule KittenPairs.GameTest do
       Game.complete_turn(turn.id)
 
       assert Repo.get_by(Game.Turn, round_id: round.id, player_id: player2.id)
+    end
+
+    test "increases the round score if a match" do
+      game = insert(:game)
+      round = insert(:round, game_id: game.id)
+      player = insert(:player, game_id: game.id)
+      insert(:player, game_id: game.id)
+      card1 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
+      card2 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
+      turn = insert(:turn, round_id: round.id, cards: [card1, card2], player_id: player.id)
+      insert(:round_score, round_id: round.id, player_id: player.id)
+
+      Game.complete_turn(turn.id)
+
+      assert Repo.get_by(Game.RoundScore, round_id: round.id, player_id: player.id).score == 1
+    end
+
+    test "keeps the round score if not a match" do
+      game = insert(:game)
+      round = insert(:round, game_id: game.id)
+      player = insert(:player, game_id: game.id)
+      insert(:player, game_id: game.id)
+      card1 = insert(:card, round_id: round.id, type: "abc", is_visible: true)
+      card2 = insert(:card, round_id: round.id, type: "def", is_visible: true)
+      turn = insert(:turn, round_id: round.id, cards: [card1, card2], player_id: player.id)
+      insert(:round_score, round_id: round.id, player_id: player.id)
+
+      Game.complete_turn(turn.id)
+
+      assert Repo.get_by(Game.RoundScore, round_id: round.id, player_id: player.id).score == 0
     end
   end
 end

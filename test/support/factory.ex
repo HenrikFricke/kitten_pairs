@@ -22,4 +22,8 @@ defmodule KittenPairs.Factory do
   def turn_factory do
     %KittenPairs.Game.Turn{}
   end
+
+  def round_score_factory do
+    %KittenPairs.Game.RoundScore{}
+  end
 end

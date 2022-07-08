@@ -3,7 +3,7 @@ defmodule KittenPairs.Game do
   alias KittenPairs.Repo
   alias Phoenix.PubSub
 
-  alias KittenPairs.Game.{Player, Game, Round, Card, Turn}
+  alias KittenPairs.Game.{Player, Game, Round, Card, Turn, RoundScore, TurnCard}
 
   def create_game(player_name) do
     Ecto.Multi.new()
@@ -99,6 +99,7 @@ defmodule KittenPairs.Game do
     first_card = Enum.at(turn.cards, 0)
     second_card = Enum.at(turn.cards, 1)
     is_match = first_card.type == second_card.type
+    increase_round_score = if is_match, do: 1, else: 0
     is_round_completed = length(Enum.filter(turn.round.cards, fn c -> not c.is_visible end)) == 0
 
     next_player_id =
@@ -107,8 +108,24 @@ defmodule KittenPairs.Game do
         else: Enum.find(turn.round.game.players, fn p -> p.id != turn.player_id end).id
 
     Ecto.Multi.new()
-    |> Ecto.Multi.update(:first_card, Card.changeset(first_card, %{is_visible: is_match}))
-    |> Ecto.Multi.update(:second_card, Card.changeset(second_card, %{is_visible: is_match}))
+    |> Ecto.Multi.update_all(
+      :cards,
+      from(c in Card,
+        join: tc in TurnCard,
+        on: tc.card_id == c.id,
+        update: [set: [is_visible: ^is_match]],
+        where: tc.turn_id == ^turn.id
+      ),
+      []
+    )
+    |> Ecto.Multi.update_all(
+      :round_score,
+      from(r in RoundScore,
+        update: [inc: [score: ^increase_round_score]],
+        where: r.round_id == ^turn.round.id and r.player_id == ^turn.player_id
+      ),
+      []
+    )
     |> Ecto.Multi.run(:new_turn, fn repo, _ ->
       unless is_round_completed do
         repo.insert(
