@@ -17,7 +17,8 @@ defmodule KittenPairs.Game.RoundScore do
   @doc false
   def changeset(round_score, attrs) do
     round_score
-    |> cast(attrs, [:round, :player, :score])
-    |> validate_required([:round, :player, :score])
+    |> cast(attrs, [:score, :round_id, :player_id])
+    |> cast_assoc(:round)
+    |> cast_assoc(:player)
   end
 end

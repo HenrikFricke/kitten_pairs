@@ -51,6 +51,13 @@ defmodule KittenPairs.Game do
       Repo.insert(Card.changeset(%Card{}, %{type: "kitten#{rem(card, 8)}", round_id: round.id}))
     end)
 
+    Repo.all(from(p in Player, where: p.game_id == ^game_id))
+    |> Enum.each(fn player ->
+      Repo.insert(
+        RoundScore.changeset(%RoundScore{}, %{round_id: round.id, player_id: player.id})
+      )
+    end)
+
     %Turn{}
     |> Turn.changeset(%{round_id: round.id, player_id: player_id})
     |> Repo.insert()
@@ -63,13 +70,7 @@ defmodule KittenPairs.Game do
     |> from(where: [game_id: ^game_id])
     |> last(:inserted_at)
     |> Repo.one()
-    |> Repo.preload(
-      cards:
-        from(
-          c in Card,
-          order_by: [desc: c.inserted_at]
-        )
-    )
+    |> Repo.preload([:round_scores, cards: from(c in Card, order_by: [desc: c.inserted_at])])
   end
 
   def get_last_turn(round_id) do
