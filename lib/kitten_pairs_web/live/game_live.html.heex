@@ -1,5 +1,5 @@
-<section class="grid grid-rows-[auto_1fr_1fr_1fr_1fr] grid-cols-4 p-2 h-screen">
-  <header class="row-start-1 col-start-1 col-span-4 flex lg:justify-between items-center pl-1 pr-2 py-2">
+<section class="grid grid-rows-[auto_1fr_1fr_1fr_1fr] grid-cols-4 p-4 h-screen">
+  <header class="row-start-1 col-start-1 col-span-4 flex lg:justify-between items-center pl-1 pr-2 pb-4">
     <%= if @last_round == nil do %>
       <h1 class="font-black text-3xl lg:text-5xl">
         kitten pairs
@@ -22,14 +22,20 @@
         
         <%= if @current_player.is_navigator do %>
           <label class="block mb-4">
-            <span class="font-zinc-900 block mb-2 text-lg">Share this link with a friend to start the first round:</span>
-            <input type="text" value={@join_link} class="w-full box-border px-4 py-3 bg-transparent border-4 border-zinc-900 rounded-3xl text-zinc-900 block font-black text-xl" />
+            <span class="font-zinc-900 block mb-2 text-xl">Share this link with a friend:</span>
+            <section class="flex gap-x-1">
+              <input type="text" value={@join_link} class="w-full box-border px-4 py-3 bg-transparent border-4 border-zinc-900 rounded-3xl text-zinc-900 block font-black text-xl" />
+              <button class="lg:hidden rounded-3xl border-4 border-zinc-900 p-3 flex items-center justify-center w-[60px] shrink-0 font-black" onclick={"navigator.share({ url: '#{@join_link}' })"}>
+                <img src="/images/icons/share.svg" role="presentation" />
+                <span class="sr-only">Share link</span>
+              </button>
+            </section>
           </label>
           <button id="create_round" phx-click="create_round" class="w-full uppercase rounded-3xl bg-pink-300 py-3 box-border font-black text-2xl disabled:opacity-50" disabled={length(@game.players) == 1}>Start round</button>
         <% end %>
 
         <%= if !@current_player.is_navigator do %>
-          <span class="font-zinc-900 block mb-2 text-lg">Waiting for the first round …</span>
+          <span class="font-zinc-900 block mb-2 text-xl">Waiting for the first round …</span>
         <% end %>
       </section>
     </section>

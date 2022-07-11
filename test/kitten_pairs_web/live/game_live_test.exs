@@ -15,7 +15,7 @@ defmodule KittenPairsWeb.GameLiveTest do
     test "waiting for other to join", %{conn: conn, game: game} do
       {:ok, _view, html} = live(conn, "/games/#{game.id}")
 
-      assert html =~ "Share this link with a friend to start the first round:"
+      assert html =~ "Share this link with a friend:"
       assert html =~ "http://localhost:4002/join/#{game.id}"
     end
 
