@@ -3,6 +3,7 @@
   "description": "matching game with little kittens",
   "display": "standalone",
   "start_url": "/",
+  "scope": "/",
   "background_color": "#fde68a",
   "theme_color": "#fde68a",
   "icons": [
