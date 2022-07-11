@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width; initial-scale=1.0; viewport-fit=cover"/>
     
     <link rel="apple-touch-icon" href={Routes.static_path(@conn, "/images/app-icon/icon-192.png")} />
-    <link rel="manifest" href={Routes.static_path(@conn, "/manifest.json")} />
+    <link rel="manifest" href="/manifest.json" />
 
     <meta name="csrf-token" content={csrf_token_value()}>
     <%= live_title_tag assigns[:page_title] || "kitten pairs" %>
