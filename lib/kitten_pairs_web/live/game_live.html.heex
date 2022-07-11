@@ -1,14 +1,14 @@
 <section class="grid grid-rows-[auto_1fr_1fr_1fr_1fr] grid-cols-4 p-4 h-screen">
-  <header class="row-start-1 col-start-1 col-span-4 flex lg:justify-between items-center pl-1 pr-2 pb-4">
+  <header class="row-start-1 col-start-1 col-span-4">
     <%= if @last_round == nil do %>
-      <h1 class="font-black text-3xl lg:text-5xl">
+      <h1 class="font-black text-5xl mb-3">
         kitten pairs
       </h1>
     <% else %>
-      <section class="w-full flex justify-between items-center">
+      <section class="w-full flex justify-between items-center px-1 mb-2">
         <%= for {player, ind} <- @game.players |> Enum.with_index do %>
-          <span class={"flex gap-x-1 items-baseline #{if ind == 1, do: "flex-row-reverse"}"}>
-            <span class="text-3xl lg:text-5xl font-black"><%= Enum.find(@last_round.round_scores, fn round_score -> round_score.player_id == player.id end).score  %></span>
+          <span class={"flex gap-x-2 items-center #{if ind == 1, do: "flex-row-reverse"}"}>
+            <span class="text-3xl lg:text-5xl font-black pb-1"><%= Enum.find(@last_round.round_scores, fn round_score -> round_score.player_id == player.id end).score  %></span>
             <span class="text-2xl lg:text-4xl font-black"><%= player.name %></span>
           </span>
         <% end %>
