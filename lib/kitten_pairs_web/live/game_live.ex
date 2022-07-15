@@ -1,6 +1,5 @@
 defmodule KittenPairsWeb.GameLive do
   use KittenPairsWeb, :live_view
-  alias KittenPairs.Game
   alias KittenPairs.GameManager
 
   defguard current_player?(socket, player_id)
