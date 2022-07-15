@@ -1,24 +1,24 @@
 defmodule KittenPairsWeb.GameLive do
   use KittenPairsWeb, :live_view
-  alias KittenPairs.Game
+  alias KittenPairs.GameManager
 
   defguard current_player?(socket, player_id)
            when socket.assigns.current_player.id === player_id
 
   def mount(%{"id" => game_id}, %{"player_id" => player_id}, socket) do
-    if connected?(socket), do: Game.subscribe(game_id)
+    if connected?(socket), do: GameManager.subscribe(game_id)
 
-    case Game.get_game_by_id(game_id) do
+    case GameManager.get_game_by_id(game_id) do
       nil ->
         {:ok, redirect(socket, to: Routes.startpage_path(socket, :index))}
 
       game ->
-        last_round = Game.get_last_round(game.id)
-        last_turn = if last_round, do: Game.get_last_turn(last_round.id), else: nil
+        last_round = GameManager.get_last_round(game.id)
+        last_turn = if last_round, do: GameManager.get_last_turn(last_round.id), else: nil
         current_player = Enum.find(game.players, fn p -> p.id == player_id end)
         join_link = Routes.startpage_url(socket, :index, game.id)
 
-        Game.notify(game_id, current_player.id, [:player, :joined])
+        GameManager.notify(game_id, current_player.id, [:player, :joined])
 
         {:ok,
          assign(socket,
@@ -35,8 +35,8 @@ defmodule KittenPairsWeb.GameLive do
     game_id = socket.assigns.game.id
     current_player_id = socket.assigns.current_player.id
 
-    Game.create_round(game_id, current_player_id)
-    Game.notify(game_id, current_player_id, [:round, :created])
+    GameManager.create_round(game_id, current_player_id)
+    GameManager.notify(game_id, current_player_id, [:round, :created])
 
     {:noreply, socket}
   end
@@ -46,14 +46,14 @@ defmodule KittenPairsWeb.GameLive do
     last_turn = socket.assigns.last_turn
     current_player_id = socket.assigns.current_player.id
 
-    Game.pick_card(last_turn.id, card_id)
-    Game.notify(game_id, current_player_id, [:card, :picked])
+    GameManager.pick_card(last_turn.id, card_id)
+    GameManager.notify(game_id, current_player_id, [:card, :picked])
 
     if length(last_turn.cards) == 1 do
       Task.start(fn ->
         Process.sleep(1000)
-        Game.complete_turn(last_turn.id)
-        Game.notify(game_id, current_player_id, [:turn, :completed])
+        GameManager.complete_turn(last_turn.id)
+        GameManager.notify(game_id, current_player_id, [:turn, :completed])
       end)
     end
 
@@ -63,31 +63,31 @@ defmodule KittenPairsWeb.GameLive do
   def handle_info({[:player, :joined], player_id, _}, socket)
       when not current_player?(socket, player_id) do
     game_id = socket.assigns.game.id
-    game = Game.get_game_by_id(game_id)
+    game = GameManager.get_game_by_id(game_id)
 
     {:noreply, assign(socket, :game, game)}
   end
 
   def handle_info({[:round, :created], _player_id, _}, socket) do
     game_id = socket.assigns.game.id
-    last_round = Game.get_last_round(game_id)
-    last_turn = Game.get_last_turn(last_round.id)
+    last_round = GameManager.get_last_round(game_id)
+    last_turn = GameManager.get_last_turn(last_round.id)
 
     {:noreply, assign(socket, last_round: last_round, last_turn: last_turn)}
   end
 
   def handle_info({[:card, :picked], _player_id, _}, socket) do
     game_id = socket.assigns.game.id
-    last_round = Game.get_last_round(game_id)
-    last_turn = Game.get_last_turn(last_round.id)
+    last_round = GameManager.get_last_round(game_id)
+    last_turn = GameManager.get_last_turn(last_round.id)
 
     {:noreply, assign(socket, last_round: last_round, last_turn: last_turn)}
   end
 
   def handle_info({[:turn, :completed], _player_id, _}, socket) do
     game_id = socket.assigns.game.id
-    last_round = Game.get_last_round(game_id)
-    last_turn = Game.get_last_turn(last_round.id)
+    last_round = GameManager.get_last_round(game_id)
+    last_turn = GameManager.get_last_turn(last_round.id)
 
     {:noreply, assign(socket, last_round: last_round, last_turn: last_turn)}
   end

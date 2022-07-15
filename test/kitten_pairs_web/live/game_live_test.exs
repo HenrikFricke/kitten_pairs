@@ -2,10 +2,10 @@ defmodule KittenPairsWeb.GameLiveTest do
   use KittenPairsWeb.ConnCase
   import Phoenix.LiveViewTest
 
-  alias KittenPairs.Game
+  alias KittenPairs.GameManager
 
   setup %{conn: conn} do
-    {:ok, %{game: game, player: player}} = Game.create_game("Chi")
+    {:ok, %{game: game, player: player}} = GameManager.create_game("Chi")
     conn = init_test_session(conn, player_id: player.id)
 
     %{conn: conn, game: game, player: player}
@@ -20,14 +20,14 @@ defmodule KittenPairsWeb.GameLiveTest do
     end
 
     test "round creation", %{conn: conn, game: game} do
-      {:ok, _player} = Game.join_game(game.id, "Hen")
+      {:ok, _player} = GameManager.join_game(game.id, "Hen")
       {:ok, view, _html} = live(conn, "/games/#{game.id}")
 
       view
       |> element("button#create_round")
       |> render_click()
 
-      assert Game.get_last_round(game.id) != nil
+      assert GameManager.get_last_round(game.id) != nil
     end
 
     test "unknown game id", %{conn: conn} do
@@ -39,8 +39,8 @@ defmodule KittenPairsWeb.GameLiveTest do
 
   describe "round" do
     setup %{conn: conn, game: game, player: player} do
-      {:ok, _player} = Game.join_game(game.id, "Hen")
-      {:ok, _round} = Game.create_round(game.id, player.id)
+      {:ok, _player} = GameManager.join_game(game.id, "Hen")
+      {:ok, _round} = GameManager.create_round(game.id, player.id)
 
       %{conn: conn, game: game}
     end

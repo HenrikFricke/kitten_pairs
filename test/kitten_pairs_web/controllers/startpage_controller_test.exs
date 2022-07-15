@@ -1,7 +1,7 @@
 defmodule KittenPairsWeb.StartpageControllerTest do
   use KittenPairsWeb.ConnCase
 
-  alias KittenPairs.Game
+  alias KittenPairs.GameManager
 
   @create_attrs %{name: "Chi"}
 
@@ -31,7 +31,7 @@ defmodule KittenPairsWeb.StartpageControllerTest do
 
   describe "POST /join/:id" do
     test "submission with valid data", %{conn: conn} do
-      {:ok, %{game: game}} = Game.create_game("Chi")
+      {:ok, %{game: game}} = GameManager.create_game("Chi")
       conn = post(conn, Routes.startpage_path(conn, :join, game.id), player: @create_attrs)
 
       assert %{id: id} = redirected_params(conn)
@@ -40,8 +40,8 @@ defmodule KittenPairsWeb.StartpageControllerTest do
     end
 
     test "too many players joining the game", %{conn: conn} do
-      {:ok, %{game: game}} = Game.create_game("Chi")
-      {:ok, _player} = Game.join_game(game.id, "Can")
+      {:ok, %{game: game}} = GameManager.create_game("Chi")
+      {:ok, _player} = GameManager.join_game(game.id, "Can")
 
       conn = post(conn, Routes.startpage_path(conn, :join, game.id), player: @create_attrs)
       assert redirected_to(conn) == Routes.startpage_path(conn, :index)
