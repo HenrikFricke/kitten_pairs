@@ -1,4 +1,4 @@
-defmodule KittenPairs.Game do
+defmodule KittenPairs.GameManager do
   import Ecto.Query, warn: false
   alias KittenPairs.Repo
   alias Phoenix.PubSub

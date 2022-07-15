@@ -1,7 +1,7 @@
 defmodule KittenPairsWeb.StartpageController do
   use KittenPairsWeb, :controller
 
-  alias KittenPairs.Game
+  alias KittenPairs.GameManager
   alias KittenPairs.Game.{Player}
 
   def index(conn, params) do
@@ -15,7 +15,7 @@ defmodule KittenPairsWeb.StartpageController do
   end
 
   def create(conn, %{"player" => p}) do
-    case Game.create_game(p["name"]) do
+    case GameManager.create_game(p["name"]) do
       {:ok, %{game: game, player: player}} ->
         conn
         |> put_session(:player_id, player.id)
@@ -34,7 +34,7 @@ defmodule KittenPairsWeb.StartpageController do
   end
 
   def join(conn, %{"id" => game_id, "player" => player}) do
-    case Game.join_game(game_id, player["name"]) do
+    case GameManager.join_game(game_id, player["name"]) do
       {:ok, player} ->
         conn
         |> put_session(:player_id, player.id)
