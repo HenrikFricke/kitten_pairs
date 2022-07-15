@@ -1,13 +1,22 @@
+DATABASE_NAME = kitten_pairs_db
+
 install:
 	mix deps.get
 	mix ecto.create
 	mix ecto.migrate
 
-server:
+start:
 	mix phx.server
 
+test:
+	mix test
+
+test-watch:
+	mix test.watch
+
 postgres:
-	docker run --detach -e POSTGRES_PASSWORD="postgres" -p 5432:5432 --volume=kitten_pairs_db:/var/lib/postgresql/data --name kitten_pairs_db postgres:12
+	podman run --detach -e POSTGRES_PASSWORD="postgres" -p 5432:5432 --volume=$(DATABASE_NAME):/var/lib/postgresql/data --name $(DATABASE_NAME) postgres:12
 
 postgres-stop:
-	docker stop kitten_pairs_db && docker rm kitten_pairs_db
+	podman stop $(DATABASE_NAME)
+	podman rm $(DATABASE_NAME)

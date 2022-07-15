@@ -1,19 +1,30 @@
-# KittenPairs
+# kitten pairs
+> Simple matching game with kittens
 
-To start your Phoenix server:
+[![](https://media0.giphy.com/media/3zrjGFggccFag/giphy.gif?cid=ecf05e47jk69wmzsh6zrcgcqntnyv31jbp7ot11f68dn98ji&rid=giphy.gif&ct=g)](https://giphy.com/gifs/3zrjGFggccFag)
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## Why?
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+It started as a fun project. I wanted to play around with Elixir/Phoenix and was looking for something cool. Implementing yet another to-do list was kinda boring. Also, who doesn't like simple online games and cat content? 🤭
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+➡️ Have fun: https://kitten-pairs.fly.dev/
 
-## Learn more
+## Development
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+Before setting up the project locally, make sure you have [Podman](https://podman.io/) and Elixir/Erlang on your computer.
+
+```sh
+git clone git@github.com:henrikfricke/kitten_pairs
+cd kitten_pairs
+
+# Start local postgres database
+make postgres
+
+# Install dependencies and run database migrations
+make install
+
+# Start server
+make start
+```
+
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser. See [Makefile](./Makefile) for more commands.
