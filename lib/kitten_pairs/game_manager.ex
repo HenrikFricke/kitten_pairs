@@ -9,8 +9,7 @@ defmodule KittenPairs.GameManager do
     Ecto.Multi.new()
     |> Ecto.Multi.insert(:game, %Game{})
     |> Ecto.Multi.insert(:player, fn %{game: game} ->
-      %Player{}
-      |> Player.changeset(%{game_id: game.id, name: player_name, is_navigator: true})
+      Player.changeset(%Player{}, %{game_id: game.id, name: player_name, is_navigator: true})
     end)
     |> Repo.transaction()
   end
@@ -40,29 +39,32 @@ defmodule KittenPairs.GameManager do
   end
 
   def create_round(game_id, player_id) do
-    {:ok, round} =
-      %Round{}
-      |> Round.changeset(%{game_id: game_id})
-      |> Repo.insert()
-
-    Enum.to_list(0..15)
-    |> Enum.shuffle()
-    |> Enum.each(fn card ->
-      Repo.insert(Card.changeset(%Card{}, %{type: "kitten#{rem(card, 8)}", round_id: round.id}))
+    Ecto.Multi.new()
+    |> Ecto.Multi.all(:players, from(p in Player, where: p.game_id == ^game_id))
+    |> Ecto.Multi.insert(:round, Round.changeset(%Round{}, %{game_id: game_id}))
+    |> Ecto.Multi.insert(:first_turn, fn %{round: round} ->
+      Turn.changeset(%Turn{}, %{round_id: round.id, player_id: player_id})
     end)
+    |> Ecto.Multi.run(:round_scores, fn repo, %{players: players, round: round} ->
+      players
+      |> Enum.each(fn player ->
+        repo.insert(
+          RoundScore.changeset(%RoundScore{}, %{round_id: round.id, player_id: player.id})
+        )
+      end)
 
-    Repo.all(from(p in Player, where: p.game_id == ^game_id))
-    |> Enum.each(fn player ->
-      Repo.insert(
-        RoundScore.changeset(%RoundScore{}, %{round_id: round.id, player_id: player.id})
-      )
+      {:ok, nil}
     end)
+    |> Ecto.Multi.run(:cards, fn repo, %{round: round} ->
+      Enum.to_list(0..15)
+      |> Enum.shuffle()
+      |> Enum.map(fn card ->
+        repo.insert(Card.changeset(%Card{}, %{type: "kitten#{rem(card, 8)}", round_id: round.id}))
+      end)
 
-    %Turn{}
-    |> Turn.changeset(%{round_id: round.id, player_id: player_id})
-    |> Repo.insert()
-
-    {:ok, round}
+      {:ok, nil}
+    end)
+    |> Repo.transaction()
   end
 
   def get_last_round(game_id) do

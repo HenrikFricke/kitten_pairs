@@ -66,7 +66,7 @@ defmodule KittenPairs.GameManagerTest do
       game = insert(:game)
       player = insert(:player)
 
-      assert {:ok, round} = GameManager.create_round(game.id, player.id)
+      assert {:ok, %{round: round}} = GameManager.create_round(game.id, player.id)
       assert Repo.get_by(Game.Round, id: round.id, game_id: game.id)
     end
 
@@ -74,7 +74,7 @@ defmodule KittenPairs.GameManagerTest do
       game = insert(:game)
       player = insert(:player)
 
-      assert {:ok, round} = GameManager.create_round(game.id, player.id)
+      assert {:ok, %{round: round}} = GameManager.create_round(game.id, player.id)
       cards = Repo.all(Game.Card, round_id: round.id)
 
       assert length(Enum.filter(cards, fn card -> card.type == "kitten0" end)) == 2
@@ -91,7 +91,7 @@ defmodule KittenPairs.GameManagerTest do
       game = insert(:game)
       player = insert(:player)
 
-      assert {:ok, round} = GameManager.create_round(game.id, player.id)
+      assert {:ok, %{round: round}} = GameManager.create_round(game.id, player.id)
       assert Repo.get_by(Game.Turn, round_id: round.id, player_id: player.id)
     end
   end
