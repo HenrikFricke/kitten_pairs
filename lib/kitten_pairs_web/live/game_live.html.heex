@@ -1,6 +1,6 @@
 <section class="grid grid-rows-[auto_1fr_1fr_1fr_1fr] grid-cols-4 p-4 h-screen-mobile">
   <header class="row-start-1 col-start-1 col-span-4">
-    <%= if @last_round == nil do %>
+    <%= if @last_round == nil or @last_round.is_completed do %>
       <h1 class="font-black text-5xl mb-3">
         kitten pairs
       </h1>
@@ -15,6 +15,7 @@
       </section>
     <% end %>
   </header>
+  
   <%= if @last_round == nil do %>
     <section class="col-span-4 row-span-4 lg:flex justify-center items-center">
       <section class="max-w-sm">
@@ -32,21 +33,35 @@
             </section>
           </label>
           <button id="create_round" phx-click="create_round" class="w-full uppercase rounded-3xl bg-pink-300 py-3 box-border font-black text-2xl disabled:opacity-50" disabled={length(@game.players) == 1}>Start round</button>
-        <% end %>
-
-        <%= if !@current_player.is_navigator do %>
+        <% else %>
           <span class="font-zinc-900 block mb-2 text-xl">Waiting for the first round …</span>
         <% end %>
       </section>
     </section>
-  <% else %>
-  <%= for card <- @last_round.cards do %>
-    <button 
-      class="col-span-1 row-span-1 overflow-hidden min-width-0 rounded-2xl border-4 border-zinc-900 m-1 bg-pink-300 focus:animate-gentle-pulse hover:animate-gentle-pulse disabled:animate-none"
-      {if @current_player.id != @last_turn.player_id or card.is_visible or length(@last_turn.cards) == 2, do: %{disabled: true}, else: %{"phx-click": "pick_card", "phx-value-id": card.id}}        
-    >
-      <img class={"w-full h-full object-cover #{if !card.is_visible do 'hidden' end}"} src={"/images/kittens/#{card.type}.jpg"} role="presentation" />
-    </button>
-    <% end %>
+  <% end %>
+  
+  <%= if @last_round != nil and !@last_round.is_completed do %>
+    <%= for card <- @last_round.cards do %>
+      <button 
+        class="col-span-1 row-span-1 overflow-hidden min-width-0 rounded-2xl border-4 border-zinc-900 m-1 bg-pink-300 focus:animate-gentle-pulse hover:animate-gentle-pulse disabled:animate-none"
+        {if @current_player.id != @last_turn.player_id or card.is_visible or length(@last_turn.cards) == 2, do: %{disabled: true}, else: %{"phx-click": "pick_card", "phx-value-id": card.id}}        
+      >
+        <img class={"w-full h-full object-cover #{if !card.is_visible do 'hidden' end}"} src={"/images/kittens/#{card.type}.jpg"} role="presentation" />
+      </button>
+      <% end %>
+  <% end %>
+
+  <%= if @last_round != nil and @last_round.is_completed do %>
+    <section class="col-span-4 row-span-4 lg:flex justify-center items-center">
+      <section class="max-w-sm">
+        <img src="/images/kitten.gif" alt="waiting cat" role="presentation" class="w-full rounded-3xl border-4 border-zinc-900 block mb-4" />
+        
+        <%= if @current_player.is_navigator do %>
+          <button id="create_round" phx-click="create_round" class="w-full uppercase rounded-3xl bg-pink-300 py-3 box-border font-black text-2xl disabled:opacity-50">Start next round</button>
+        <% else %>
+          <span class="font-zinc-900 block mb-2 text-xl">Waiting for the next round …</span>
+        <% end %>
+      </section>
+    </section>  
   <% end %>
 </section>

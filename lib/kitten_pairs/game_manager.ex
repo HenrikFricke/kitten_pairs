@@ -38,12 +38,17 @@ defmodule KittenPairs.GameManager do
     Ecto.Query.CastError -> nil
   end
 
-  def create_round(game_id, player_id) do
+  def create_round(game_id) do
     Ecto.Multi.new()
     |> Ecto.Multi.all(:players, from(p in Player, where: p.game_id == ^game_id))
     |> Ecto.Multi.insert(:round, Round.changeset(%Round{}, %{game_id: game_id}))
-    |> Ecto.Multi.insert(:first_turn, fn %{round: round} ->
-      Turn.changeset(%Turn{}, %{round_id: round.id, player_id: player_id})
+    |> Ecto.Multi.insert(:first_turn, fn %{round: round, players: players} ->
+      player =
+        players
+        |> Enum.shuffle()
+        |> Enum.at(0)
+
+      Turn.changeset(%Turn{}, %{round_id: round.id, player_id: player.id})
     end)
     |> Ecto.Multi.run(:round_scores, fn repo, %{players: players, round: round} ->
       players
@@ -135,7 +140,9 @@ defmodule KittenPairs.GameManager do
           Turn.changeset(%Turn{}, %{round_id: turn.round.id, player_id: next_player_id})
         )
       else
-        {:ok, %{}}
+        turn.round
+        |> Round.changeset(%{is_completed: true})
+        |> repo.update()
       end
     end)
     |> Repo.transaction()

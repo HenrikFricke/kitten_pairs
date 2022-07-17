@@ -64,17 +64,17 @@ defmodule KittenPairs.GameManagerTest do
   describe "create_round/2" do
     test "creates a round" do
       game = insert(:game)
-      player = insert(:player)
+      insert(:player, game_id: game.id)
 
-      assert {:ok, %{round: round}} = GameManager.create_round(game.id, player.id)
+      assert {:ok, %{round: round}} = GameManager.create_round(game.id)
       assert Repo.get_by(Game.Round, id: round.id, game_id: game.id)
     end
 
     test "creates cards" do
       game = insert(:game)
-      player = insert(:player)
+      insert(:player, game_id: game.id)
 
-      assert {:ok, %{round: round}} = GameManager.create_round(game.id, player.id)
+      assert {:ok, %{round: round}} = GameManager.create_round(game.id)
       cards = Repo.all(Game.Card, round_id: round.id)
 
       assert length(Enum.filter(cards, fn card -> card.type == "kitten0" end)) == 2
@@ -89,9 +89,9 @@ defmodule KittenPairs.GameManagerTest do
 
     test "creates a turn" do
       game = insert(:game)
-      player = insert(:player)
+      player = insert(:player, game_id: game.id)
 
-      assert {:ok, %{round: round}} = GameManager.create_round(game.id, player.id)
+      assert {:ok, %{round: round}} = GameManager.create_round(game.id)
       assert Repo.get_by(Game.Turn, round_id: round.id, player_id: player.id)
     end
   end
@@ -228,6 +228,19 @@ defmodule KittenPairs.GameManagerTest do
       GameManager.complete_turn(turn.id)
 
       assert Repo.get_by(Game.RoundScore, round_id: round.id, player_id: player.id).score == 0
+    end
+
+    test "completes the round if no more cards" do
+      game = insert(:game)
+      round = insert(:round, game_id: game.id)
+      player1 = insert(:player, game_id: game.id)
+      card1 = insert(:card, round_id: round.id, is_visible: true)
+      card2 = insert(:card, round_id: round.id, is_visible: true)
+      turn = insert(:turn, round_id: round.id, cards: [card1, card2], player_id: player1.id)
+
+      GameManager.complete_turn(turn.id)
+
+      assert Repo.get_by(Game.Round, id: round.id, is_completed: true)
     end
   end
 end

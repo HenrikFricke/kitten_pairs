@@ -38,9 +38,9 @@ defmodule KittenPairsWeb.GameLiveTest do
   end
 
   describe "round" do
-    setup %{conn: conn, game: game, player: player} do
+    setup %{conn: conn, game: game} do
       {:ok, _player} = GameManager.join_game(game.id, "Hen")
-      {:ok, _round} = GameManager.create_round(game.id, player.id)
+      {:ok, _round} = GameManager.create_round(game.id)
 
       %{conn: conn, game: game}
     end

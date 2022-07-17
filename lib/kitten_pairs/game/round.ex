@@ -9,6 +9,7 @@ defmodule KittenPairs.Game.Round do
     has_many :cards, Card
     has_many :turns, Turn
     has_many :round_scores, RoundScore
+    field :is_completed, :boolean
 
     timestamps()
   end
@@ -16,7 +17,7 @@ defmodule KittenPairs.Game.Round do
   @doc false
   def changeset(round, attrs \\ %{}) do
     round
-    |> cast(attrs, [:game_id])
+    |> cast(attrs, [:game_id, :is_completed])
     |> validate_required([:game_id])
   end
 end
