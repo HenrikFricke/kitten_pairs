@@ -4,12 +4,14 @@ defmodule KittenPairs.GameState do
   """
 
   alias KittenPairs.Player
+  alias KittenPairs.Card
   alias __MODULE__
 
   defstruct id: nil,
             players: [],
             player_turn: nil,
-            status: :not_started
+            status: :not_started,
+            cards: []
 
   def new(id, %Player{} = player) do
     %GameState{id: id, players: [%Player{player | is_navigator: true}]}
@@ -29,6 +31,13 @@ defmodule KittenPairs.GameState do
       |> Enum.shuffle()
       |> Enum.at(0)
 
-    %GameState{state | status: :playing, player_turn: player_turn}
+    cards =
+      Enum.to_list(0..15)
+      |> Enum.shuffle()
+      |> Enum.map(fn card ->
+        %Card{type: "kitten#{rem(card, 8)}"}
+      end)
+
+    %GameState{state | status: :playing, player_turn: player_turn, cards: cards}
   end
 end
