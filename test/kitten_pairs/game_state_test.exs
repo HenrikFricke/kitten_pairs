@@ -39,29 +39,28 @@ defmodule KittenPairs.GameStateTest do
 
   describe "start/1" do
     test "picks player for first turn", %{game_id: game_id, p1: p1, p2: p2} do
-      {:ok, state} =
+      %{player_turn: player_turn} =
         GameState.new(game_id, p1)
         |> GameState.join(p2)
+        |> GameState.start()
 
-      assert %{player_turn: player_turn} = GameState.start(state)
       assert player_turn != nil
     end
 
     test "updates the status", %{game_id: game_id, p1: p1, p2: p2} do
-      {:ok, state} =
+      %{status: status} =
         GameState.new(game_id, p1)
         |> GameState.join(p2)
+        |> GameState.start()
 
-      assert %{status: status} = GameState.start(state)
       assert status == :playing
     end
 
     test "creates cards", %{game_id: game_id, p1: p1, p2: p2} do
-      {:ok, state} =
+      %{cards: cards} =
         GameState.new(game_id, p1)
         |> GameState.join(p2)
-
-      assert %{cards: cards} = GameState.start(state)
+        |> GameState.start()
 
       assert length(Enum.filter(cards, fn card -> card.type == "kitten0" end)) == 2
       assert length(Enum.filter(cards, fn card -> card.type == "kitten1" end)) == 2

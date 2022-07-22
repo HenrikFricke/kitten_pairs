@@ -25,6 +25,8 @@ defmodule KittenPairs.GameState do
     {:error, :too_many_players}
   end
 
+  def start({:ok, %GameState{} = state}), do: start(state)
+
   def start(%GameState{} = state) do
     player_turn =
       state.players
