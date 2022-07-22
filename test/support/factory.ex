@@ -5,6 +5,12 @@ defmodule KittenPairs.Factory do
     %KittenPairs.Game.Game{}
   end
 
+  def player2_factory do
+    %KittenPairs.Player{
+      name: "Hen"
+    }
+  end
+
   def player_factory do
     %KittenPairs.Game.Player{
       name: "Hen"
