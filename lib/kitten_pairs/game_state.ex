@@ -10,6 +10,7 @@ defmodule KittenPairs.GameState do
   defstruct id: nil,
             players: [],
             player_turn: nil,
+            cards_turn: [],
             status: :not_started,
             cards: []
 
@@ -37,7 +38,7 @@ defmodule KittenPairs.GameState do
       Enum.to_list(0..15)
       |> Enum.shuffle()
       |> Enum.map(fn card ->
-        %Card{type: "kitten#{rem(card, 8)}"}
+        Card.create("kitten#{rem(card, 8)}")
       end)
 
     %GameState{state | status: :playing, player_turn: player_turn, cards: cards}
